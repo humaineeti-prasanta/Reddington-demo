@@ -1,0 +1,285 @@
+// reddington-v1 — single source of truth for all data models (design doc §3).
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------- Enums (§3.1) ----------
+enum ConsentAction {
+  granted
+  rejected
+  skipped
+  withdrawn
+}
+
+enum ConsentSource {
+  registration
+  jit
+  consent_page
+  re_consent
+}
+
+enum Category {
+  men
+  women
+  kids
+  footwear
+  accessories
+  beauty
+}
+
+enum OrderStatus {
+  placed
+  packed
+  shipped
+  delivered
+}
+
+enum NotificationType {
+  order
+  promo
+}
+
+enum EmailType {
+  order_confirmation
+  marketing
+}
+
+enum AnalyticsEventType {
+  session_start
+  page_view
+}
+
+// ---------- Identity (§3.2) ----------
+model User {
+  id                         String   @id @default(cuid())
+  name                       String
+  email                      String   @unique
+  phone                      String
+  passwordHash               String
+  lastConsentedNoticeVersion Int?
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
+
+  addresses       Address[]
+  consentEvents   ConsentEvent[]
+  consentStates   ConsentState[]
+  wishlistItems   WishlistItem[]
+  cartItems       CartItem[]
+  orders          Order[]
+  notifications   Notification[]
+  emailLogs       EmailLog[]
+  analyticsEvents AnalyticsEvent[]
+  viewEvents      ViewEvent[]
+}
+
+model Address {
+  id      String  @id @default(cuid())
+  userId  String
+  user    User    @relation(fields: [userId], references: [id])
+  label   String
+  line1   String
+  line2   String?
+  city    String
+  state   String
+  pincode String
+
+  @@index([userId])
+}
+
+// ---------- Consent domain (§3.3) ----------
+model ConsentPurpose {
+  id             String   @id @default(cuid())
+  purposeId      String   @unique
+  name           String
+  description    String
+  mandatory      Boolean  @default(false)
+  dataCategories String[]
+  displayOrder   Int
+}
+
+model Notice {
+  id          String   @id @default(cuid())
+  version     Int      @unique
+  title       String
+  content     String
+  active      Boolean  @default(false)
+  publishedAt DateTime @default(now())
+}
+
+// Append-only. Rows are never updated or deleted.
+model ConsentEvent {
+  id            String        @id @default(cuid())
+  userId        String
+  user          User          @relation(fields: [userId], references: [id])
+  purposeId     String
+  action        ConsentAction
+  noticeVersion Int
+  source        ConsentSource
+  screen        String
+  ip            String?
+  userAgent     String?
+  createdAt     DateTime      @default(now())
+
+  @@index([userId, purposeId, createdAt])
+}
+
+// Derived current state — one row per (user, purpose); missing row ≡ pending.
+model ConsentState {
+  id        String        @id @default(cuid())
+  userId    String
+  user      User          @relation(fields: [userId], references: [id])
+  purposeId String
+  status    ConsentAction
+  updatedAt DateTime      @updatedAt
+
+  @@unique([userId, purposeId])
+}
+
+// ---------- Catalog, wishlist, cart (§3.4) ----------
+model Product {
+  id          String   @id @default(cuid())
+  title       String
+  brand       String
+  description String
+  category    Category
+  price       Int
+  mrp         Int
+  images      String[]
+  sizes       String[]
+  rating      Float
+  tags        String[]
+  createdAt   DateTime @default(now())
+
+  wishlistItems WishlistItem[]
+  cartItems     CartItem[]
+  orderItems    OrderItem[]
+  viewEvents    ViewEvent[]
+}
+
+model WishlistItem {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+}
+
+model CartItem {
+  id        String  @id @default(cuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  qty       Int     @default(1)
+  size      String  @default("")
+
+  @@unique([userId, productId, size])
+}
+
+// ---------- Orders (§3.5) ----------
+model Order {
+  id               String      @id @default(cuid())
+  userId           String
+  user             User        @relation(fields: [userId], references: [id])
+  amount           Int
+  shippingName     String
+  shippingPhone    String
+  addrLine1        String
+  addrLine2        String?
+  city             String
+  state            String
+  pincode          String
+  locationLat      Float?
+  locationLng      Float?
+  paymentMethod    String      @default("fake_card")
+  paymentStatus    String      @default("paid")
+  txnId            String
+  status           OrderStatus @default(placed)
+  expectedDelivery DateTime
+  createdAt        DateTime    @default(now())
+
+  items OrderItem[]
+
+  @@index([userId])
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  title     String
+  price     Int
+  qty       Int
+  size      String?
+
+  @@index([orderId])
+}
+
+// ---------- Notification, EmailLog, AnalyticsEvent, ViewEvent (§3.6) ----------
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id])
+  type      NotificationType
+  title     String
+  body      String
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  @@index([userId])
+}
+
+// Evidence trail that consent was honored.
+model EmailLog {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  email         String
+  type          EmailType
+  subject       String
+  body          String
+  sent          Boolean
+  skippedReason String?
+  createdAt     DateTime  @default(now())
+
+  @@index([userId])
+}
+
+model AnalyticsEvent {
+  id        String             @id @default(cuid())
+  userId    String
+  user      User               @relation(fields: [userId], references: [id])
+  eventType AnalyticsEventType
+  page      String?
+  userAgent String
+  platform  String
+  language  String
+  screenW   Int
+  screenH   Int
+  createdAt DateTime           @default(now())
+
+  @@index([userId])
+}
+
+// Product views powering recommendations; written only under consent.
+model ViewEvent {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  category  String
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}

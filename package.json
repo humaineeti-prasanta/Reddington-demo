@@ -1,0 +1,17 @@
+{
+  "name": "reddington-v1",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AJIO-style DPDP consent-mechanics demo (monorepo).",
+  "scripts": {
+    "dev": "concurrently -n server,client -c green,cyan \"npm --prefix server run dev\" \"npm --prefix client run dev\"",
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "db:seed": "npm --prefix server run db:seed",
+    "bump-notice": "npm --prefix server run bump-notice",
+    "test": "npm --prefix server test"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
