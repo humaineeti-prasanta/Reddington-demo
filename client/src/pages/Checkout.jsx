@@ -95,6 +95,21 @@ export default function Checkout() {
       });
       qc.invalidateQueries({ queryKey: ['cart'] });
       navigate(`/order-success/${order.id}`);
+      // VIOLATION F/G/H: Conversion pixels fire regardless of device_analytics consent.
+      // Facebook and Google are not named as data processors in any consent purpose.
+      // content_ids (browsing profile) + value sent to Facebook bypass all server-side gates.
+      window.fbq?.('track', 'Purchase', {
+        value: (cart.subtotal ?? 0) / 100,
+        currency: 'INR',
+        content_ids: cart.items.map((i) => i.productId),
+        content_type: 'product',
+      });
+      window.gtag?.('event', 'purchase', {
+        transaction_id: order.id,
+        value: (cart.subtotal ?? 0) / 100,
+        currency: 'INR',
+        items: cart.items.map((i) => ({ item_id: i.productId, item_name: i.product?.title, price: (i.product?.price ?? 0) / 100 })),
+      });
     } catch (err) {
       toast.error(err?.response?.data?.error === 'cart_empty' ? 'Your cart is empty.' : 'Payment failed. Try again.');
     } finally {

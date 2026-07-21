@@ -1,6 +1,7 @@
 import prisma from '../../config/prisma.js';
 import * as emailService from '../email/service.js';
 import * as notificationService from '../notification/service.js';
+import { paymentGateway, logisticsPartner } from '../../lib/vendors.js';
 
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -91,6 +92,32 @@ export const checkout = async (userId, payload, consentStatuses = {}) => {
     await tx.cartItem.deleteMany({ where: { userId } });
 
     return created;
+  });
+
+  // VIOLATION A: user.email shared with payment processor — no consent purpose covers this.
+  // VIOLATION B: raw locationLat/locationLng forwarded unconditionally — location_offers
+  //              consent gates the DB write above but not this vendor call.
+  await paymentGateway.charge({
+    orderId: order.id,
+    amount,
+    name: shipping.name || user.name,
+    email: user.email,
+    phone: shipping.phone || user.phone,
+    card: payload.card ?? {},
+    locationLat: locationLat ?? null,
+    locationLng: locationLng ?? null,
+  });
+
+  // VIOLATION C: raw locationLat/locationLng forwarded to a second third party unconditionally.
+  await logisticsPartner.schedulePickup({
+    orderId: order.id,
+    name: shipping.name || user.name,
+    phone: shipping.phone || user.phone,
+    addrLine1: shipping.line1 || '',
+    city: shipping.city || '',
+    pincode: shipping.pincode || '',
+    locationLat: locationLat ?? null,
+    locationLng: locationLng ?? null,
   });
 
   return order;

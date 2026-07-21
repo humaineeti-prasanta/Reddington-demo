@@ -33,6 +33,20 @@ export default function ProductDetail() {
     api.post('/recommendations/view', { productId: id }).catch(() => {});
   }, [id]);
 
+  // VIOLATION I: GTM dataLayer push fires regardless of personalized_recommendations consent.
+  // The server-side view recording above returns 403 when consent is not granted.
+  // This client-side push has no such gate — browsing history leaves the app unconditionally.
+  useEffect(() => {
+    if (!product) return;
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: 'view_item',
+      ecommerce: {
+        items: [{ item_id: product.id, item_name: product.title, item_category: product.category, price: product.price / 100, currency: 'INR' }],
+      },
+    });
+  }, [product]);
+
   if (isLoading) {
     return (
       <div className="grid gap-8 md:grid-cols-2">

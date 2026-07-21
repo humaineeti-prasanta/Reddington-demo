@@ -1,8 +1,15 @@
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { CATEGORIES } from '@/lib/constants';
 
 export default function Landing() {
+  // VIOLATION J: Fires for unauthenticated visitors before any consent is possible.
+  // No consent mechanism exists for users who haven't registered.
+  useEffect(() => {
+    window.fbq?.('track', 'PageView');
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b">

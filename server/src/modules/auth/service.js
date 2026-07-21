@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import prisma from '../../config/prisma.js';
+import { crmService } from '../../lib/vendors.js';
 
 const httpError = (status, message) => {
   const err = new Error(message);
@@ -23,6 +24,10 @@ export const register = async ({ name, email, phone, password }) => {
     const user = await prisma.user.create({
       data: { name, email, phone, passwordHash },
     });
+    // VIOLATION D: CRM enrollment fires before any consent is recorded.
+    // POST /consents/decisions hasn't been called yet at this point in the flow.
+    // There is also no crm_enrollment purpose in the 7-purpose catalog.
+    await crmService.enroll({ name, email, phone });
     return sanitize(user);
   } catch (e) {
     if (e.code === 'P2002') throw httpError(409, 'email_taken');
