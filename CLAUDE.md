@@ -57,7 +57,24 @@ npm run dev                          # from root: starts server (:5000) + client
 - `preview` — serve `dist/` at `:5173` (use this for E2E tests, not `dev`)
 - `lint` — oxlint
 
-## 6. Architecture: Consent Engine
+## 6. Third-Party Vendor Stubs & Intentional Violations
+
+`server/src/lib/vendors.js` defines four fake vendor stubs that simulate external HTTP calls. No real requests are made — each stub logs what it would send (`[VENDOR:...]`) and returns a hardcoded success.
+
+| Stub | Simulates | Called from |
+|------|-----------|-------------|
+| `paymentGateway.charge()` | Razorpay / Stripe | `order/service.js` — after checkout transaction |
+| `logisticsPartner.schedulePickup()` | Delhivery / Shiprocket | `order/service.js` — after checkout transaction |
+| `crmService.enroll()` | Segment / Klaviyo | `auth/service.js` — immediately after `prisma.user.create()` |
+| `analyticsForwarder.track()` | Mixpanel / Amplitude | `analytics/service.js` — after every analytics DB write |
+
+**These vendor calls contain intentional DPDP policy violations** planted for the compliance graph to detect. They are real data flows in the code (not comments) but invisible in the running app.
+
+Client-side violations live in three page components — `window.fbq`, `window.gtag`, `window.dataLayer` calls that fire without consent gates (see `client/README.md` for details).
+
+**Do NOT remove or "fix" these violations.** They are the ground truth the DPDP audit system is tested against.
+
+## 8. Architecture: Consent Engine
 
 ```
 POST /api/consents/decisions
@@ -70,14 +87,14 @@ POST /api/consents/decisions
 
 `requireConsent(purposeId)` middleware factory lives in `src/middleware/requireConsent.js`. It reads `ConsentState` at request time and returns `403 { error: 'consent_required', purposeId }` when the status is not `'granted'`. It always runs after `requireAuth`.
 
-## 7. Known Gotchas
+## 9. Known Gotchas
 
 - **Neon latency ~256ms/RTT** (us-east-1, India): a 9-query transaction takes ~3 s. Never reduce `prisma.$transaction` timeout below 20 s.
 - **Vite 8 HMR crash** (Windows, exit code `0xC0000409` / STATUS_STACK_BUFFER_OVERRUN): do **not** run Playwright or long E2E tests against `vite dev`. Always use `npm run build && npm run preview` + plain `node src/server.js`.
 - **`preview.proxy` must be configured** in `client/vite.config.js` — `vite preview` does not inherit `server.proxy`. This is already set up; don't remove it.
 - **Soft references in consent domain**: `ConsentEvent.purposeId`, `ConsentEvent.noticeVersion`, `User.lastConsentedNoticeVersion` have **no database FK**. This is intentional — it keeps the append-only audit log independent of catalog changes and readable by the Python DPDP-graph agent.
 
-## 8. Testing
+## 10. Testing
 
 ```sh
 cd server && npm test
@@ -89,7 +106,7 @@ cd server && npm test
 - `tests/helpers.js` — `assertTestDb()` throws if the current database is not `reddington_test` (prevents accidental production truncation)
 - 12 tests across `auth.test.js` (5) and `consent.test.js` (7)
 
-## 9. File Structure
+## 11. File Structure
 
 ```
 reddington-v1/
@@ -100,7 +117,7 @@ reddington-v1/
 └── CLAUDE.md      ← this file
 ```
 
-## 10. Navigation Example — Finding a Module (Server)
+## 12. Navigation Example — Finding a Module (Server)
 
 > **Task:** "I want to understand how personalized recommendations work."
 
@@ -111,7 +128,7 @@ reddington-v1/
 
 **Pattern:** `routes.js` (HTTP layer) → `service.js` (business logic + Prisma queries). Every module follows this two-file pattern.
 
-## 11. What NOT To Do
+## 13. What NOT To Do
 
 - Don't add `.ts` files or TypeScript anywhere
 - Don't add a second consent write path — no direct `ConsentEvent` inserts in route handlers
@@ -119,3 +136,4 @@ reddington-v1/
 - Don't commit `server/.env`
 - Don't run Playwright against `vite dev` — use `vite preview`
 - Don't lower the `prisma.$transaction` timeout below 20 s
+- **Don't remove or "fix" the intentional DPDP violations** in `server/src/lib/vendors.js` call sites or the `window.fbq`/`window.gtag`/`window.dataLayer` calls in client pages — these are the ground-truth violations the compliance audit system will be tested against

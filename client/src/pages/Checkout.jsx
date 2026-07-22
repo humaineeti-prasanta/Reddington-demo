@@ -95,9 +95,6 @@ export default function Checkout() {
       });
       qc.invalidateQueries({ queryKey: ['cart'] });
       navigate(`/order-success/${order.id}`);
-      // VIOLATION F/G/H: Conversion pixels fire regardless of device_analytics consent.
-      // Facebook and Google are not named as data processors in any consent purpose.
-      // content_ids (browsing profile) + value sent to Facebook bypass all server-side gates.
       window.fbq?.('track', 'Purchase', {
         value: (cart.subtotal ?? 0) / 100,
         currency: 'INR',

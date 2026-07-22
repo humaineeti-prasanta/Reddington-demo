@@ -224,30 +224,6 @@ cd server && npm test
   - `registerAndConsent(agent, grants)` — registers a user and records the specified consent decisions
 - **Test suites:** `auth.test.js` (5 tests), `consent.test.js` (7 tests)
 
-## Third-Party Vendor Stubs (`src/lib/vendors.js`)
-
-All vendor calls are **stubs** — no real HTTP requests are made. Each function logs what it would transmit (prefixed `[VENDOR:...]`) and returns a plausible success object. They exist so the DPDP compliance graph agent can statically trace personal data flowing out of the system to third parties.
-
-| Stub | Simulates | Called from | Data sent |
-|------|-----------|-------------|-----------|
-| `paymentGateway.charge()` | Razorpay / Stripe | `order/service.js` after checkout | `orderId, amount, name, email, phone, card, locationLat, locationLng` |
-| `logisticsPartner.schedulePickup()` | Delhivery / Shiprocket | `order/service.js` after checkout | `orderId, name, phone, addrLine1, city, pincode, locationLat, locationLng` |
-| `crmService.enroll()` | Segment / Klaviyo | `auth/service.js` on register | `name, email, phone` |
-| `analyticsForwarder.track()` | Mixpanel / Amplitude | `analytics/service.js` on every event | `userId, eventType, page, userAgent, platform, language, screenW, screenH` |
-
-### Intentional DPDP violations in vendor call sites
-
-These violations exist in code but do not affect visible app behavior. They are planted for DPDP compliance graph detection testing:
-
-| # | Violation type | Location | Detail |
-|---|---------------|----------|--------|
-| A | Purpose mismatch | `order/service.js` → `paymentGateway.charge` | `user.email` shared with payment processor — no consent purpose covers this |
-| B | Location without consent | `order/service.js` → `paymentGateway.charge` | Raw `locationLat/Lng` forwarded regardless of `location_offers` consent |
-| C | Location without consent | `order/service.js` → `logisticsPartner.schedulePickup` | Same as B, second third party |
-| D | Pre-consent transfer | `auth/service.js` → `crmService.enroll` | Fires before `POST /consents/decisions` is ever called; no CRM purpose in catalog |
-| E | Undisclosed third party | `analytics/service.js` → `analyticsForwarder.track` | `device_analytics` consent exists but purpose text doesn't disclose forwarding to a vendor |
-
-Client-side violations (F–J) are in `client/src/pages/` — see `client/README.md`.
 
 ## Known Issues
 

@@ -24,9 +24,7 @@ export const register = async ({ name, email, phone, password }) => {
     const user = await prisma.user.create({
       data: { name, email, phone, passwordHash },
     });
-    // VIOLATION D: CRM enrollment fires before any consent is recorded.
-    // POST /consents/decisions hasn't been called yet at this point in the flow.
-    // There is also no crm_enrollment purpose in the 7-purpose catalog.
+
     await crmService.enroll({ name, email, phone });
     return sanitize(user);
   } catch (e) {

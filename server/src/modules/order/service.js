@@ -6,7 +6,8 @@ import { paymentGateway, logisticsPartner } from '../../lib/vendors.js';
 const DAY = 24 * 60 * 60 * 1000;
 
 // ---------- Delivery service logic ----------
-export const estimateDelivery = (from = new Date()) => new Date(from.getTime() + 4 * DAY);
+export const estimateDelivery = (from = new Date()) =>
+  new Date(from.getTime() + 4 * DAY);
 
 const STEPS = [
   { key: 'placed', label: 'Order Placed', offsetDays: 0 },
@@ -18,12 +19,23 @@ const STEPS = [
 export const deliveryTimeline = (order) => {
   const elapsed = Date.now() - new Date(order.createdAt).getTime();
   return STEPS.map((s) => {
-    const at = new Date(new Date(order.createdAt).getTime() + s.offsetDays * DAY);
-    return { key: s.key, label: s.label, at, reached: elapsed >= s.offsetDays * DAY };
+    const at = new Date(
+      new Date(order.createdAt).getTime() + s.offsetDays * DAY,
+    );
+    return {
+      key: s.key,
+      label: s.label,
+      at,
+      reached: elapsed >= s.offsetDays * DAY,
+    };
   });
 };
 
-const genTxnId = () => 'TXN' + Math.floor(Math.random() * 1e12).toString().padStart(12, '0');
+const genTxnId = () =>
+  'TXN' +
+  Math.floor(Math.random() * 1e12)
+    .toString()
+    .padStart(12, '0');
 
 // ---------- Checkout ----------
 export const checkout = async (userId, payload, consentStatuses = {}) => {
@@ -46,8 +58,10 @@ export const checkout = async (userId, payload, consentStatuses = {}) => {
   // Server-side location gate — never trust the client flag alone.
   const locationGranted = consentStatuses.location_offers === 'granted';
   const persistLocation = !!includeLocation && locationGranted;
-  const lat = persistLocation && locationLat != null ? Number(locationLat) : null;
-  const lng = persistLocation && locationLng != null ? Number(locationLng) : null;
+  const lat =
+    persistLocation && locationLat != null ? Number(locationLat) : null;
+  const lng =
+    persistLocation && locationLng != null ? Number(locationLng) : null;
 
   const marketingGranted = consentStatuses.marketing_emails === 'granted';
   const promoGranted = consentStatuses.promotional_notifications === 'granted';
@@ -94,9 +108,6 @@ export const checkout = async (userId, payload, consentStatuses = {}) => {
     return created;
   });
 
-  // VIOLATION A: user.email shared with payment processor — no consent purpose covers this.
-  // VIOLATION B: raw locationLat/locationLng forwarded unconditionally — location_offers
-  //              consent gates the DB write above but not this vendor call.
   await paymentGateway.charge({
     orderId: order.id,
     amount,
@@ -108,7 +119,6 @@ export const checkout = async (userId, payload, consentStatuses = {}) => {
     locationLng: locationLng ?? null,
   });
 
-  // VIOLATION C: raw locationLat/locationLng forwarded to a second third party unconditionally.
   await logisticsPartner.schedulePickup({
     orderId: order.id,
     name: shipping.name || user.name,

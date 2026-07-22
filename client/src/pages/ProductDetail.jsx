@@ -33,9 +33,7 @@ export default function ProductDetail() {
     api.post('/recommendations/view', { productId: id }).catch(() => {});
   }, [id]);
 
-  // VIOLATION I: GTM dataLayer push fires regardless of personalized_recommendations consent.
-  // The server-side view recording above returns 403 when consent is not granted.
-  // This client-side push has no such gate — browsing history leaves the app unconditionally.
+
   useEffect(() => {
     if (!product) return;
     window.dataLayer = window.dataLayer || [];
