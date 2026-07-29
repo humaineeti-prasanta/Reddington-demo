@@ -54,16 +54,32 @@ enum AnalyticsEventType {
   page_view
 }
 
+enum DsarType {
+  access
+  correction
+  erasure
+  portability
+}
+
+enum DsarStatus {
+  pending
+  in_progress
+  completed
+  rejected
+  failed
+}
+
 // ---------- Identity (§3.2) ----------
 model User {
-  id                         String   @id @default(cuid())
+  id                         String    @id @default(cuid())
   name                       String
-  email                      String   @unique
+  email                      String    @unique
   phone                      String
   passwordHash               String
   lastConsentedNoticeVersion Int?
-  createdAt                  DateTime @default(now())
-  updatedAt                  DateTime @updatedAt
+  deletedAt                  DateTime?
+  createdAt                  DateTime  @default(now())
+  updatedAt                  DateTime  @updatedAt
 
   addresses       Address[]
   consentEvents   ConsentEvent[]
@@ -75,6 +91,7 @@ model User {
   emailLogs       EmailLog[]
   analyticsEvents AnalyticsEvent[]
   viewEvents      ViewEvent[]
+  dsarRequests    DsarRequest[]
 }
 
 model Address {
@@ -282,4 +299,29 @@ model ViewEvent {
   createdAt DateTime @default(now())
 
   @@index([userId])
+}
+
+// ---------- DSAR (DPDP §11–§13) ----------
+// One row per data-principal request. Status transitions: pending → in_progress → completed | rejected | failed.
+// resultData captures the point-in-time snapshot returned to the user (access/portability).
+// requestData captures user-supplied inputs (correction fields, erasure reason).
+model DsarRequest {
+  id            String     @id @default(cuid())
+  userId        String?
+  user          User?      @relation(fields: [userId], references: [id])
+  email         String
+  type          DsarType
+  status        DsarStatus @default(pending)
+  requestData   Json?
+  resultData    Json?
+  reason        String?
+  rejectionNote String?
+  ip            String?
+  userAgent     String?
+  submittedAt   DateTime   @default(now())
+  processedAt   DateTime?
+
+  @@index([userId])
+  @@index([status])
+  @@index([email])
 }

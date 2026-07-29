@@ -19,6 +19,12 @@ CREATE TYPE "EmailType" AS ENUM ('order_confirmation', 'marketing');
 -- CreateEnum
 CREATE TYPE "AnalyticsEventType" AS ENUM ('session_start', 'page_view');
 
+-- CreateEnum
+CREATE TYPE "DsarType" AS ENUM ('access', 'correction', 'erasure', 'portability');
+
+-- CreateEnum
+CREATE TYPE "DsarStatus" AS ENUM ('pending', 'in_progress', 'completed', 'rejected', 'failed');
+
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
@@ -27,6 +33,7 @@ CREATE TABLE "User" (
     "phone" TEXT NOT NULL,
     "passwordHash" TEXT NOT NULL,
     "lastConsentedNoticeVersion" INTEGER,
+    "deletedAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -230,6 +237,25 @@ CREATE TABLE "ViewEvent" (
     CONSTRAINT "ViewEvent_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "DsarRequest" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT,
+    "email" TEXT NOT NULL,
+    "type" "DsarType" NOT NULL,
+    "status" "DsarStatus" NOT NULL DEFAULT 'pending',
+    "requestData" JSONB,
+    "resultData" JSONB,
+    "reason" TEXT,
+    "rejectionNote" TEXT,
+    "ip" TEXT,
+    "userAgent" TEXT,
+    "submittedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "processedAt" TIMESTAMP(3),
+
+    CONSTRAINT "DsarRequest_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
@@ -271,6 +297,15 @@ CREATE INDEX "AnalyticsEvent_userId_idx" ON "AnalyticsEvent"("userId");
 
 -- CreateIndex
 CREATE INDEX "ViewEvent_userId_idx" ON "ViewEvent"("userId");
+
+-- CreateIndex
+CREATE INDEX "DsarRequest_userId_idx" ON "DsarRequest"("userId");
+
+-- CreateIndex
+CREATE INDEX "DsarRequest_status_idx" ON "DsarRequest"("status");
+
+-- CreateIndex
+CREATE INDEX "DsarRequest_email_idx" ON "DsarRequest"("email");
 
 -- AddForeignKey
 ALTER TABLE "Address" ADD CONSTRAINT "Address_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -316,3 +351,6 @@ ALTER TABLE "ViewEvent" ADD CONSTRAINT "ViewEvent_userId_fkey" FOREIGN KEY ("use
 
 -- AddForeignKey
 ALTER TABLE "ViewEvent" ADD CONSTRAINT "ViewEvent_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "DsarRequest" ADD CONSTRAINT "DsarRequest_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
