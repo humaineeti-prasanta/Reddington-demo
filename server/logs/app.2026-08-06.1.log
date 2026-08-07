@@ -1,0 +1,52 @@
+{"level":30,"time":"2026-08-06T06:50:28.990Z","service":"reddington-server","env":"development","port":"5000","msg":"reddington server listening on http://localhost:5000"}
+{"level":30,"time":"2026-08-06T06:50:28.990Z","service":"reddington-server","env":"development","module":"dsar-worker","intervalMs":30000,"msg":"started"}
+{"level":30,"time":"2026-08-06T06:50:33.758Z","service":"reddington-server","env":"development","req":{"id":"11d6f19d-6c76-4730-82f6-392d066917f7","method":"POST","url":"/api/auth/login","remoteAddress":"::1"},"res":{"statusCode":200},"responseTime":2424,"msg":"POST /login 200"}
+{"level":30,"time":"2026-08-06T06:50:34.202Z","service":"reddington-server","env":"development","req":{"id":"7b6731c2-60c1-4140-a164-9341b4984439","method":"GET","url":"/api/consents/me","remoteAddress":"::1"},"res":{"statusCode":304},"responseTime":237,"msg":"GET /me 304"}
+{"level":30,"time":"2026-08-06T06:50:36.317Z","service":"reddington-server","env":"development","req":{"id":"9558b633-88e6-41f1-a202-7619e65f358b","method":"GET","url":"/api/products?sort=rating&limit=8","remoteAddress":"::1"},"res":{"statusCode":304},"responseTime":48,"msg":"GET /?sort=rating&limit=8 304"}
+{"level":30,"time":"2026-08-06T06:50:36.422Z","service":"reddington-server","env":"development","req":{"id":"e5aab7de-b3c3-48ab-b53b-15cbd3cf2e77","method":"GET","url":"/api/users/wishlist","remoteAddress":"::1"},"res":{"statusCode":304},"responseTime":148,"msg":"GET /wishlist 304"}
+{"level":30,"time":"2026-08-06T06:50:36.431Z","service":"reddington-server","env":"development","req":{"id":"01c49c91-f78b-4b04-9deb-3557d7f9e8df","method":"GET","url":"/api/cart","remoteAddress":"::1"},"res":{"statusCode":304},"responseTime":152,"msg":"GET / 304"}
+{"level":30,"time":"2026-08-06T06:50:36.439Z","service":"reddington-server","env":"development","req":{"id":"f1ce1718-231e-449d-a600-d39c30c4fe3e","method":"GET","url":"/api/notifications/unread-count","remoteAddress":"::1"},"res":{"statusCode":304},"responseTime":156,"msg":"GET /unread-count 304"}
+{"level":30,"time":"2026-08-06T06:50:36.488Z","service":"reddington-server","env":"development","req":{"id":"9ee0af86-7849-41d4-8c48-fc2ce53049b7","method":"GET","url":"/api/products/offers?lat=22.511789009941324&lng=88.39986036773529","remoteAddress":"::1"},"res":{"statusCode":200},"responseTime":11,"msg":"GET /offers?lat=22.511789009941324&lng=88.39986036773529 200"}
+{"level":30,"time":"2026-08-06T06:50:36.490Z","service":"reddington-server","env":"development","req":{"id":"2ed7a0c3-20cc-456d-a063-af6b2eeb689f","method":"GET","url":"/api/recommendations","remoteAddress":"::1"},"res":{"statusCode":304},"responseTime":230,"msg":"GET / 304"}
+
+
+
+
+
+
+{"level":30,"time":"2026-08-06T06:50:51.971Z","service":"reddington-server","env":"development","req":{"id":"0da68a14-6a64-494e-a513-e1d045f59314","method":"GET","url":"/api/notifications","remoteAddress":"::1"},"res":{"statusCode":304},"responseTime":11,"msg":"GET / 304"}
+{"level":30,"time":"2026-08-06T06:51:06.470Z","service":"reddington-server","env":"development","req":{"id":"6dd2407d-12d3-4695-8c65-159d9cd68835","method":"GET","url":"/api/notifications/unread-count","remoteAddress":"::1"},"res":{"statusCode":304},"responseTime":3,"msg":"GET /unread-count 304"}
+{"level":30,"time":"2026-08-06T06:51:08.562Z","service":"reddington-server","env":"development","req":{"id":"6b725827-1f7d-4ed2-9456-dcb4092f3e8d","method":"GET","url":"/api/users/wishlist","remoteAddress":"::1"},"res":{"statusCode":304},"responseTime":4,"msg":"GET /wishlist 304"}
+{"level":30,"time":"2026-08-06T06:51:08.564Z","service":"reddington-server","env":"development","req":{"id":"b1854a9e-736a-4dfe-a54f-454928eca19d","method":"GET","url":"/api/products?sort=rating&limit=8","remoteAddress":"::1"},"res":{"statusCode":304},"responseTime":8,"msg":"GET /?sort=rating&limit=8 304"}
+{"level":30,"time":"2026-08-06T06:51:08.575Z","service":"reddington-server","env":"development","req":{"id":"56bdcc0c-19aa-4fbb-bc17-7b6c53348fe0","method":"GET","url":"/api/recommendations","remoteAddress":"::1"},"res":{"statusCode":304},"responseTime":22,"msg":"GET / 304"}
+{"level":30,"time":"2026-08-06T06:51:12.712Z","service":"reddington-server","env":"development","req":{"id":"4ffc9e82-ad3b-4e05-a322-44cd9350108f","method":"GET","url":"/api/products/offers?lat=22.51176886301238&lng=88.39986779891997","remoteAddress":"::1"},"res":{"statusCode":200},"responseTime":3,"msg":"GET /offers?lat=22.51176886301238&lng=88.39986779891997 200"}
+{"level":30,"time":"2026-08-06T06:51:16.139Z","service":"reddington-server","env":"development","req":{"id":"15456c3f-66cc-4d01-ba45-b22a9f0c9c4d","method":"GET","url":"/api/products/cms5yuenp000z5ao888toq476","remoteAddress":"::1"},"res":{"statusCode":200},"responseTime":6,"msg":"GET /cms5yuenp000z5ao888toq476 200"}
+{"level":30,"time":"2026-08-06T06:51:16.144Z","service":"reddington-server","env":"development","req":{"id":"1d40a6d5-4933-49b8-9e62-e4deb4f6d639","method":"GET","url":"/api/users/wishlist","remoteAddress":"::1"},"res":{"statusCode":304},"responseTime":6,"msg":"GET /wishlist 304"}
+{"level":30,"time":"2026-08-06T06:51:16.206Z","service":"reddington-server","env":"development","req":{"id":"b4e33f68-cb77-4b2b-ba2e-bbbbc7086022","method":"POST","url":"/api/recommendations/view","remoteAddress":"::1"},"res":{"statusCode":201},"responseTime":71,"msg":"POST /view 201"}
+{"level":30,"time":"2026-08-06T06:51:16.207Z","service":"reddington-server","env":"development","req":{"id":"9887b95e-aa43-4e96-994b-c4e762e6fa8f","method":"POST","url":"/api/recommendations/view","remoteAddress":"::1"},"res":{"statusCode":201},"responseTime":70,"msg":"POST /view 201"}
+{"level":30,"time":"2026-08-06T06:51:17.600Z","service":"reddington-server","env":"development","req":{"id":"5a7effcc-23da-4f3c-be79-9086cc04fd73","method":"POST","url":"/api/cart/items","remoteAddress":"::1"},"res":{"statusCode":201},"responseTime":15,"msg":"POST /items 201"}
+{"level":30,"time":"2026-08-06T06:51:17.609Z","service":"reddington-server","env":"development","req":{"id":"cae009b6-0fd0-4fc8-a521-4cb45b84b802","method":"GET","url":"/api/cart","remoteAddress":"::1"},"res":{"statusCode":200},"responseTime":3,"msg":"GET / 200"}
+{"level":30,"time":"2026-08-06T06:51:19.877Z","service":"reddington-server","env":"development","req":{"id":"517cb033-34f6-45a7-9d0d-a7d68586e87b","method":"GET","url":"/api/cart","remoteAddress":"::1"},"res":{"statusCode":304},"responseTime":15,"msg":"GET / 304"}
+{"level":30,"time":"2026-08-06T06:51:21.493Z","service":"reddington-server","env":"development","req":{"id":"108bafb0-7522-426c-beac-523e6d43f6f1","method":"GET","url":"/api/cart","remoteAddress":"::1"},"res":{"statusCode":304},"responseTime":8,"msg":"GET / 304"}
+{"level":30,"time":"2026-08-06T06:51:21.500Z","service":"reddington-server","env":"development","req":{"id":"2a208246-aabc-4ca1-9315-51835bacaf3e","method":"GET","url":"/api/users/profile","remoteAddress":"::1"},"res":{"statusCode":304},"responseTime":9,"msg":"GET /profile 304"}
+
+
+
+
+
+
+
+
+
+{"level":30,"time":"2026-08-06T06:51:36.134Z","service":"reddington-server","env":"development","req":{"id":"7a3de3ba-0be8-43a1-b3f8-09b4650cac2b","method":"POST","url":"/api/orders","remoteAddress":"::1"},"res":{"statusCode":201},"responseTime":166,"msg":"POST / 201"}
+{"level":30,"time":"2026-08-06T06:51:36.155Z","service":"reddington-server","env":"development","req":{"id":"78bc536f-7f84-4580-a21a-7ba297e40de3","method":"GET","url":"/api/cart","remoteAddress":"::1"},"res":{"statusCode":200},"responseTime":3,"msg":"GET / 200"}
+{"level":30,"time":"2026-08-06T06:51:36.168Z","service":"reddington-server","env":"development","req":{"id":"e3993fc3-17fa-4913-844f-fdeadf863933","method":"GET","url":"/api/orders/cmsh5qyah00075a7or4m19s81","remoteAddress":"::1"},"res":{"statusCode":200},"responseTime":6,"msg":"GET /cmsh5qyah00075a7or4m19s81 200"}
+
+
+{"level":30,"time":"2026-08-06T06:51:36.492Z","service":"reddington-server","env":"development","req":{"id":"13d7f653-5213-4885-8625-7525672b6fd2","method":"GET","url":"/api/notifications/unread-count","remoteAddress":"::1"},"res":{"statusCode":200},"responseTime":4,"msg":"GET /unread-count 200"}
+{"level":30,"time":"2026-08-06T06:52:06.510Z","service":"reddington-server","env":"development","req":{"id":"fc9e9758-94ed-4120-ac5a-2cdff69f6749","method":"GET","url":"/api/notifications/unread-count","remoteAddress":"::1"},"res":{"statusCode":304},"responseTime":2,"msg":"GET /unread-count 304"}
+{"level":30,"time":"2026-08-06T06:52:14.009Z","service":"reddington-server","env":"development","req":{"id":"e931b5e9-a0a7-40e1-a89e-ff3612786c2c","method":"GET","url":"/api/notifications","remoteAddress":"::1"},"res":{"statusCode":200},"responseTime":26,"msg":"GET / 200"}
+{"level":30,"time":"2026-08-06T06:52:44.935Z","service":"reddington-server","env":"development","req":{"id":"3d5ec166-2946-4bb2-b1e1-5312e3afa1bc","method":"GET","url":"/api/products?sort=rating&limit=8","remoteAddress":"::1"},"res":{"statusCode":304},"responseTime":3,"msg":"GET /?sort=rating&limit=8 304"}
+{"level":30,"time":"2026-08-06T06:52:44.939Z","service":"reddington-server","env":"development","req":{"id":"031da9d7-0b72-44ad-be32-c303bd4a062f","method":"GET","url":"/api/users/wishlist","remoteAddress":"::1"},"res":{"statusCode":304},"responseTime":7,"msg":"GET /wishlist 304"}
+{"level":30,"time":"2026-08-06T06:52:44.940Z","service":"reddington-server","env":"development","req":{"id":"e888ad8e-567a-4b37-9dc9-92611a88c6a6","method":"GET","url":"/api/recommendations","remoteAddress":"::1"},"res":{"statusCode":200},"responseTime":10,"msg":"GET / 200"}
+{"level":30,"time":"2026-08-06T06:52:52.946Z","service":"reddington-server","env":"development","req":{"id":"f4f0e024-c6cd-4b6f-b045-8960628b312c","method":"GET","url":"/api/products/offers?lat=19.076&lng=72.877","remoteAddress":"::1"},"res":{"statusCode":200},"responseTime":3,"msg":"GET /offers?lat=19.076&lng=72.877 200"}

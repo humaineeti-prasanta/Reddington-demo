@@ -1,7 +1,5 @@
 node_modules/
 .env
-*.log
-logs/
 .qodo/
 docs/*
 docs
