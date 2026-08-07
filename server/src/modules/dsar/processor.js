@@ -1,5 +1,8 @@
 import prisma from '../../config/prisma.js';
 import * as consentService from '../consent/service.js';
+import logger from '../../lib/logger.js';
+
+const log = logger.child({ module: 'dsar-processor' });
 
 // Fields users may correct via a `correction` DSAR. Anything else in requestData is ignored.
 const CORRECTABLE_USER_FIELDS = ['name', 'phone'];
@@ -247,7 +250,7 @@ export const processOne = async (requestId) => {
     });
     return { ok: true };
   } catch (err) {
-    console.error('[DSAR] processOne failed', requestId, err);
+    log.error({ err, requestId }, 'processOne failed');
     await prisma.dsarRequest.update({
       where: { id: requestId },
       data: {

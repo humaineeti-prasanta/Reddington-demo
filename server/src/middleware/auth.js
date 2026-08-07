@@ -6,6 +6,7 @@ export const requireAuth = (req, res, next) => {
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET);
     req.user = { id: payload.id };
+    if (req.log) req.log = req.log.child({ userId: payload.id });
     next();
   } catch {
     return res.status(401).json({ error: 'unauthorized' });
