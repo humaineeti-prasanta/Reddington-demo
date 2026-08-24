@@ -13,6 +13,8 @@ export function AuthProvider({ children }) {
   const [reconsentRequired, setReconsentRequired] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  console.log("consents", consents)
+  
   const refreshConsents = useCallback(async () => {
     try {
       const { data } = await api.get('/consents/me');

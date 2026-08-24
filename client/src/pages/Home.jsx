@@ -87,6 +87,8 @@ function ForYou({ heartProps }) {
 
   const consentBlocked = recs.isError && isConsentError(recs.error);
 
+  console.log('recs', recs, 'consentBlocked', consentBlocked);
+
   return (
     <section className="space-y-4">
       <div className="flex items-center gap-2">
