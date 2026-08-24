@@ -16,8 +16,6 @@ const notFound = (message) => {
   return err;
 };
 
-// Public submission. Always creates a request when the email matches a live user.
-// Returns a generic 202-shaped payload regardless of match so callers cannot enumerate emails.
 export const submitPublic = async ({ email, type, requestData, reason }, reqMeta = {}) => {
   if (!email || typeof email !== 'string') throw badRequest('email_required');
   if (!VALID_TYPES.includes(type)) throw badRequest('invalid_type');
@@ -88,7 +86,6 @@ export const getForUser = async (userId, requestId) => {
   return row;
 };
 
-// For the download endpoint — access/portability results only.
 export const getResultForUser = async (userId, requestId) => {
   const row = await getForUser(userId, requestId);
   if (!['access', 'portability'].includes(row.type)) {

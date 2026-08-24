@@ -17,6 +17,7 @@ import notificationRoutes from './modules/notification/routes.js';
 import recommendationRoutes from './modules/recommendation/routes.js';
 import analyticsRoutes from './modules/analytics/routes.js';
 import dsarRoutes from './modules/dsar/routes.js';
+import dsarActivityRoutes from './modules/dsar/activityRoutes.js';
 
 const app = express();
 
@@ -72,6 +73,7 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/recommendations', recommendationRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/dsar', dsarRoutes);
+app.use('/api/dsar/me/activities', dsarActivityRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

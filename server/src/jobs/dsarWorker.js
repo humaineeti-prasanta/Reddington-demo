@@ -3,9 +3,7 @@ import logger from '../lib/logger.js';
 
 const log = logger.child({ module: 'dsar-worker' });
 
-// Periodic batch job that drains the DSAR pending queue.
-// Default cadence: 30s in dev; override with DSAR_WORKER_INTERVAL_MS.
-// Set DSAR_WORKER_ENABLED=false to disable (useful in tests).
+
 let handle = null;
 let running = false;
 

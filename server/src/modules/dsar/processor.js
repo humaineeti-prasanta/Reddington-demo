@@ -4,11 +4,8 @@ import logger from '../../lib/logger.js';
 
 const log = logger.child({ module: 'dsar-processor' });
 
-// Fields users may correct via a `correction` DSAR. Anything else in requestData is ignored.
 const CORRECTABLE_USER_FIELDS = ['name', 'phone'];
 
-// Vendors that receive user data — surfaced verbatim in the "access" bundle so the
-// data principal can see who their data is shared with (DPDP §11.1(b)).
 const VENDOR_DISCLOSURE = [
   { vendor: 'paymentGateway', purpose: 'order_processing', fields: ['name', 'email', 'phone', 'orderAmount', 'locationLat', 'locationLng'] },
   { vendor: 'logisticsPartner', purpose: 'order_processing', fields: ['name', 'phone', 'address', 'locationLat', 'locationLng'] },
@@ -77,7 +74,6 @@ const runAccess = async (request) => {
   return { resultData: bundle };
 };
 
-// Portability is Access reshaped for machine consumption — same content, flatter envelope.
 const runPortability = async (request) => {
   const bundle = await buildAccessBundle(request.userId);
   return {
@@ -134,12 +130,9 @@ const runCorrection = async (request) => {
   return { resultData: { applied: patch, addressesReplaced: !!addressChanges } };
 };
 
-// Erasure honours DPDP §12 but preserves the append-only ConsentEvent audit log and
-// financial order records (mandatory retention under Indian tax/commerce law).
 const runErasure = async (request) => {
   const userId = request.userId;
 
-  // 1. Withdraw all non-mandatory consents through the single write path (CLAUDE.md §3).
   const purposes = await prisma.consentPurpose.findMany();
   const optional = purposes.filter((p) => !p.mandatory);
   if (optional.length) {
@@ -158,7 +151,6 @@ const runErasure = async (request) => {
 
   await prisma.$transaction(
     async (tx) => {
-      // Erase behavioural + preference data.
       await tx.viewEvent.deleteMany({ where: { userId } });
       await tx.analyticsEvent.deleteMany({ where: { userId } });
       await tx.notification.deleteMany({ where: { userId } });
@@ -167,7 +159,6 @@ const runErasure = async (request) => {
       await tx.wishlistItem.deleteMany({ where: { userId } });
       await tx.address.deleteMany({ where: { userId } });
 
-      // Redact PII on retained orders (financial records kept, shipping/contact scrubbed).
       await tx.order.updateMany({
         where: { userId },
         data: {
@@ -208,7 +199,6 @@ const HANDLERS = {
   erasure: runErasure,
 };
 
-// Processes a single request. Idempotent enough for the worker to retry `failed` rows.
 export const processOne = async (requestId) => {
   const request = await prisma.dsarRequest.findUnique({ where: { id: requestId } });
   if (!request) return { ok: false, reason: 'not_found' };
@@ -263,7 +253,6 @@ export const processOne = async (requestId) => {
   }
 };
 
-// Batch entry point — called by the cron worker. Processes up to `limit` pending rows per tick.
 export const processPending = async ({ limit = 10 } = {}) => {
   const pending = await prisma.dsarRequest.findMany({
     where: { status: 'pending' },

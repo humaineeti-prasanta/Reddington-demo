@@ -10,8 +10,6 @@ const reqMeta = (req) => ({
   userAgent: req.get('user-agent') || null,
 });
 
-// PUBLIC — a data principal who is not (or no longer) logged in submits a request.
-// Always returns 202 with a generic payload so email addresses cannot be enumerated.
 router.post('/requests', async (req, res, next) => {
   try {
     const { email, type, requestData, reason } = req.body || {};
@@ -28,7 +26,6 @@ router.post('/requests', async (req, res, next) => {
   }
 });
 
-// AUTHED — logged-in self-service submission.
 router.post('/me/requests', requireAuth, async (req, res, next) => {
   try {
     const { type, requestData, reason } = req.body || {};
@@ -74,7 +71,6 @@ router.get('/me/requests/:id', requireAuth, async (req, res, next) => {
   }
 });
 
-// Downloads the export bundle (access / portability only, after completion).
 router.get('/me/requests/:id/download', requireAuth, async (req, res, next) => {
   try {
     const row = await dsarService.getResultForUser(req.user.id, req.params.id);
@@ -89,7 +85,6 @@ router.get('/me/requests/:id/download', requireAuth, async (req, res, next) => {
   }
 });
 
-// ADMIN — manually kick the worker. Protected by shared secret so external ops can trigger it.
 router.post('/admin/process', async (req, res, next) => {
   try {
     const secret = req.get('x-admin-token');
