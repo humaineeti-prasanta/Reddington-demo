@@ -4,7 +4,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Reddington theme — white / off-white / near-black / orange (AJIO-adjacent). */
 :root {
   --radius: 0.5rem;
 

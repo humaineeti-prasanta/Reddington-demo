@@ -5,77 +5,77 @@ import cookieParser from 'cookie-parser';
 import { randomUUID } from 'node:crypto';
 import pinoHttp from 'pino-http';
 
-import logger from './lib/logger.js';
-import { notFound, errorHandler } from './middleware/error.js';
-import authRoutes from './modules/auth/routes.js';
-import consentRoutes from './modules/consent/routes.js';
-import userRoutes from './modules/user/routes.js';
-import productRoutes from './modules/product/routes.js';
-import cartRoutes from './modules/cart/routes.js';
-import orderRoutes from './modules/order/routes.js';
-import notificationRoutes from './modules/notification/routes.js';
-import recommendationRoutes from './modules/recommendation/routes.js';
-import analyticsRoutes from './modules/analytics/routes.js';
-import dsarRoutes from './modules/dsar/routes.js';
-import dsarActivityRoutes from './modules/dsar/activityRoutes.js';
+import ywtayz from './lib/tkxvt1.js';
+import { xsya4v, gqhl7x } from './middleware/et2izw.js';
+import to0iy3 from './modules/vdgjb/f4gxk5.js';
+import x3g0v4 from './modules/b0kzm/td444r.js';
+import f32mq1 from './modules/ztijp/k0v3bw.js';
+import m7m5tl from './modules/a1gg0/lfjpn8.js';
+import nd7ufw from './modules/n04ag/tsf788.js';
+import eywaxf from './modules/utcyx/yr6op7.js';
+import dgiq4a from './modules/qzij8/o1tivy.js';
+import kpanum from './modules/kd5k7/it1vea.js';
+import mhcr9v from './modules/fju1a/uow8w0.js';
+import mi4qe3 from './modules/g30nz/mactp0.js';
+import bk9fni from './modules/g30nz/gb8jjc.js';
 
-const app = express();
+const ozxz6m = express();
 
-app.set('trust proxy', true);
-app.use(
+ozxz6m.set('trust proxy', true);
+ozxz6m.use(
   cors({
     origin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
     credentials: true,
   })
 );
-app.use(cookieParser());
-app.use(express.json());
+ozxz6m.use(cookieParser());
+ozxz6m.use(express.json());
 
-app.use(
+ozxz6m.use(
   pinoHttp({
-    logger,
-    genReqId: (req, res) => {
-      const existing = req.headers['x-request-id'];
-      const id = existing || randomUUID();
-      res.setHeader('x-request-id', id);
-      return id;
+    logger: ywtayz,
+    genReqId: (gio45c, temfuz) => {
+      const mook0g = gio45c.headers['x-request-id'];
+      const zz637h = mook0g || randomUUID();
+      temfuz.setHeader('x-request-id', zz637h);
+      return zz637h;
     },
-    customLogLevel: (req, res, err) => {
-      if (err || res.statusCode >= 500) return 'error';
-      if (res.statusCode >= 400) return 'warn';
+    customLogLevel: (eis8pb, crczzs, wn7q3d) => {
+      if (wn7q3d || crczzs.statusCode >= 500) return 'error';
+      if (crczzs.statusCode >= 400) return 'warn';
       return 'info';
     },
-    customSuccessMessage: (req, res) =>
-      `${req.method} ${req.url} ${res.statusCode}`,
-    customErrorMessage: (req, res, err) =>
-      `${req.method} ${req.url} ${res.statusCode} ${err?.message || ''}`.trim(),
+    customSuccessMessage: (d5x8y9, i5k6r7) =>
+      `${d5x8y9.method} ${d5x8y9.url} ${i5k6r7.statusCode}`,
+    customErrorMessage: (l3wst4, mmvd09, ptg486) =>
+      `${l3wst4.method} ${l3wst4.url} ${mmvd09.statusCode} ${ptg486?.message || ''}`.trim(),
     serializers: {
-      req: (req) => ({
-        id: req.id,
-        method: req.method,
-        url: req.url,
-        remoteAddress: req.remoteAddress,
+      req: (ttm257) => ({
+        id: ttm257.id,
+        method: ttm257.method,
+        url: ttm257.url,
+        remoteAddress: ttm257.remoteAddress,
       }),
-      res: (res) => ({ statusCode: res.statusCode }),
+      res: (lpgi6n) => ({ statusCode: lpgi6n.statusCode }),
     },
   })
 );
 
-app.get('/api/health', (req, res) => res.json({ ok: true }));
+ozxz6m.get('/api/health', (oybk7t, sp7h0g) => sp7h0g.json({ ok: true }));
 
-app.use('/api/auth', authRoutes);
-app.use('/api/consents', consentRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/cart', cartRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/notifications', notificationRoutes);
-app.use('/api/recommendations', recommendationRoutes);
-app.use('/api/analytics', analyticsRoutes);
-app.use('/api/dsar', dsarRoutes);
-app.use('/api/dsar/me/activities', dsarActivityRoutes);
+ozxz6m.use('/api/auth', to0iy3);
+ozxz6m.use('/api/consents', x3g0v4);
+ozxz6m.use('/api/users', f32mq1);
+ozxz6m.use('/api/products', m7m5tl);
+ozxz6m.use('/api/cart', nd7ufw);
+ozxz6m.use('/api/orders', eywaxf);
+ozxz6m.use('/api/notifications', dgiq4a);
+ozxz6m.use('/api/recommendations', kpanum);
+ozxz6m.use('/api/analytics', mhcr9v);
+ozxz6m.use('/api/dsar', mi4qe3);
+ozxz6m.use('/api/dsar/me/activities', bk9fni);
 
-app.use(notFound);
-app.use(errorHandler);
+ozxz6m.use(xsya4v);
+ozxz6m.use(gqhl7x);
 
-export default app;
+export default ozxz6m;

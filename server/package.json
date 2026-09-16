@@ -8,7 +8,7 @@
     "start": "node src/server.js",
     "migrate": "prisma migrate dev",
     "db:seed": "prisma db seed",
-    "bump-notice": "node src/seed/bump-notice.js",
+    "bump-notice": "node src/seed/sr7lvf.js",
     "studio": "prisma studio",
     "test": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --runInBand"
   },

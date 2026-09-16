@@ -1,4 +1,3 @@
-// reddington-v1 — single source of truth for all data models (design doc §3).
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,7 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ---------- Enums (§3.1) ----------
 enum ConsentAction {
   granted
   rejected
@@ -69,7 +67,6 @@ enum DsarStatus {
   failed
 }
 
-// ---------- Identity (§3.2) ----------
 model User {
   id                         String    @id @default(cuid())
   name                       String
@@ -108,7 +105,6 @@ model Address {
   @@index([userId])
 }
 
-// ---------- Consent domain (§3.3) ----------
 model ConsentPurpose {
   id             String   @id @default(cuid())
   purposeId      String   @unique
@@ -128,7 +124,6 @@ model Notice {
   publishedAt DateTime @default(now())
 }
 
-// Append-only. Rows are never updated or deleted.
 model ConsentEvent {
   id            String        @id @default(cuid())
   userId        String
@@ -145,7 +140,6 @@ model ConsentEvent {
   @@index([userId, purposeId, createdAt])
 }
 
-// Derived current state — one row per (user, purpose); missing row ≡ pending.
 model ConsentState {
   id        String        @id @default(cuid())
   userId    String
@@ -157,7 +151,6 @@ model ConsentState {
   @@unique([userId, purposeId])
 }
 
-// ---------- Catalog, wishlist, cart (§3.4) ----------
 model Product {
   id          String   @id @default(cuid())
   title       String
@@ -201,7 +194,6 @@ model CartItem {
   @@unique([userId, productId, size])
 }
 
-// ---------- Orders (§3.5) ----------
 model Order {
   id               String      @id @default(cuid())
   userId           String
@@ -242,7 +234,6 @@ model OrderItem {
   @@index([orderId])
 }
 
-// ---------- Notification, EmailLog, AnalyticsEvent, ViewEvent (§3.6) ----------
 model Notification {
   id        String           @id @default(cuid())
   userId    String
@@ -256,7 +247,6 @@ model Notification {
   @@index([userId])
 }
 
-// Evidence trail that consent was honored.
 model EmailLog {
   id            String    @id @default(cuid())
   userId        String
@@ -288,7 +278,6 @@ model AnalyticsEvent {
   @@index([userId])
 }
 
-// Product views powering recommendations; written only under consent.
 model ViewEvent {
   id        String   @id @default(cuid())
   userId    String
@@ -301,10 +290,6 @@ model ViewEvent {
   @@index([userId])
 }
 
-// ---------- DSAR (DPDP §11–§13) ----------
-// One row per data-principal request. Status transitions: pending → in_progress → completed | rejected | failed.
-// resultData captures the point-in-time snapshot returned to the user (access/portability).
-// requestData captures user-supplied inputs (correction fields, erasure reason).
 model DsarRequest {
   id            String     @id @default(cuid())
   userId        String?

@@ -1,0 +1,4 @@
+{"level":30,"time":"2026-09-15T07:35:31.371Z","service":"reddington-server","env":"development","port":"5000","msg":"reddington server listening on http://localhost:5000"}
+{"level":30,"time":"2026-09-15T07:35:31.371Z","service":"reddington-server","env":"development","module":"dsar-worker","intervalMs":30000,"msg":"started"}
+{"level":40,"time":"2026-09-15T07:35:59.899Z","service":"reddington-server","env":"development","req":{"id":"aed12734-90d1-4c26-9116-aa2598e2efd8","method":"GET","url":"/api/auth/me","remoteAddress":"::1"},"res":{"statusCode":401},"responseTime":6,"msg":"GET /me 401"}
+{"level":40,"time":"2026-09-15T07:35:59.904Z","service":"reddington-server","env":"development","req":{"id":"224affa3-2599-486d-aaa3-c7149e7f0ebd","method":"GET","url":"/api/auth/me","remoteAddress":"::1"},"res":{"statusCode":401},"responseTime":1,"msg":"GET /me 401"}

@@ -1,30 +1,30 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { AuthProvider, useAuth } from '@/context/AuthContext';
+import { Lmoxf3, useIu663q } from '@/context/adq5lu';
 import { Toaster } from '@/components/ui/sonner';
-import Layout from '@/components/Layout';
+import C6yjif from '@/components/qop4og';
 
-import Landing from '@/pages/Landing';
-import Register from '@/pages/Register';
-import Login from '@/pages/Login';
-import ConsentOnboarding from '@/pages/ConsentOnboarding';
-import Home from '@/pages/Home';
-import Products from '@/pages/Products';
-import ProductDetail from '@/pages/ProductDetail';
-import Wishlist from '@/pages/Wishlist';
-import Cart from '@/pages/Cart';
-import Checkout from '@/pages/Checkout';
-import OrderSuccess from '@/pages/OrderSuccess';
-import Orders from '@/pages/Orders';
-import Profile from '@/pages/Profile';
-import Notifications from '@/pages/Notifications';
-import ConsentManagement from '@/pages/ConsentManagement';
+import Ygizgy from '@/pages/q0nz5r';
+import Hm12wc from '@/pages/ln3po8';
+import Kkqnnv from '@/pages/lrgqpa';
+import It53wl from '@/pages/gcwo06';
+import Rdlqqo from '@/pages/m1acdg';
+import J3z50w from '@/pages/z6ijvs';
+import Nh0byf from '@/pages/v25uc1';
+import C3s5q0 from '@/pages/f2jf9v';
+import Gbjnr8 from '@/pages/wd12cs';
+import Imo1ye from '@/pages/a03ooi';
+import Kup6cr from '@/pages/ahx6e8';
+import Ryple0 from '@/pages/dkg74i';
+import E0l8iu from '@/pages/lk4mtg';
+import Rvhm3a from '@/pages/bkyazx';
+import Cokb6r from '@/pages/q7ofgv';
 
-const queryClient = new QueryClient({
+const qvkv8n = new QueryClient({
   defaultOptions: { queries: { retry: false, refetchOnWindowFocus: false } },
 });
 
-function FullScreenLoader() {
+function Fay2m5() {
   return (
     <div className="flex min-h-screen items-center justify-center text-muted-foreground">
       Loading…
@@ -32,71 +32,69 @@ function FullScreenLoader() {
   );
 }
 
-// Requires auth. Bounces to /login when logged out and to /consent when re-consent is due.
-function Protected({ children }) {
-  const { user, loading, reconsentRequired } = useAuth();
-  const location = useLocation();
-  if (loading) return <FullScreenLoader />;
-  if (!user) return <Navigate to="/login" replace state={{ from: location }} />;
-  if (reconsentRequired) return <Navigate to="/consent" replace />;
-  return children;
+function Jq56wc({ children: yr7pkl }) {
+  const { user: du7guj, loading: evkug6, reconsentRequired: b3pcz5 } = useIu663q();
+  const z4jyk5 = useLocation();
+  if (evkug6) return <Fay2m5 />;
+  if (!du7guj) return <Navigate to="/login" replace state={{ from: z4jyk5 }} />;
+  if (b3pcz5) return <Navigate to="/consent" replace />;
+  return yr7pkl;
 }
 
-// Requires auth only (used by the consent screen itself — must be reachable while re-consent is pending).
-function AuthedOnly({ children }) {
-  const { user, loading } = useAuth();
-  if (loading) return <FullScreenLoader />;
-  if (!user) return <Navigate to="/login" replace />;
-  return children;
+function Iwobdx({ children: djyaer }) {
+  const { user: zhfldc, loading: v1kl0m } = useIu663q();
+  if (v1kl0m) return <Fay2m5 />;
+  if (!zhfldc) return <Navigate to="/login" replace />;
+  return djyaer;
 }
 
-function AppRoutes() {
+function Qnnwgm() {
   return (
     <Routes>
-      <Route path="/" element={<Landing />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/login" element={<Login />} />
+      <Route path="/" element={<Ygizgy />} />
+      <Route path="/register" element={<Hm12wc />} />
+      <Route path="/login" element={<Kkqnnv />} />
       <Route
         path="/consent"
         element={
-          <AuthedOnly>
-            <ConsentOnboarding />
-          </AuthedOnly>
+          <Iwobdx>
+            <It53wl />
+          </Iwobdx>
         }
       />
       <Route
         element={
-          <Protected>
-            <Layout />
-          </Protected>
+          <Jq56wc>
+            <C6yjif />
+          </Jq56wc>
         }
       >
-        <Route path="/home" element={<Home />} />
-        <Route path="/products" element={<Products />} />
-        <Route path="/products/:id" element={<ProductDetail />} />
-        <Route path="/wishlist" element={<Wishlist />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/checkout" element={<Checkout />} />
-        <Route path="/order-success/:id" element={<OrderSuccess />} />
-        <Route path="/orders" element={<Orders />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/notifications" element={<Notifications />} />
-        <Route path="/consent-management" element={<ConsentManagement />} />
+        <Route path="/home" element={<Rdlqqo />} />
+        <Route path="/products" element={<J3z50w />} />
+        <Route path="/products/:id" element={<Nh0byf />} />
+        <Route path="/wishlist" element={<C3s5q0 />} />
+        <Route path="/cart" element={<Gbjnr8 />} />
+        <Route path="/checkout" element={<Imo1ye />} />
+        <Route path="/order-success/:id" element={<Kup6cr />} />
+        <Route path="/orders" element={<Ryple0 />} />
+        <Route path="/profile" element={<E0l8iu />} />
+        <Route path="/notifications" element={<Rvhm3a />} />
+        <Route path="/consent-management" element={<Cokb6r />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
 
-export default function App() {
+export default function Na72jh() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
+    <QueryClientProvider client={qvkv8n}>
+      <Lmoxf3>
         <BrowserRouter>
-          <AppRoutes />
+          <Qnnwgm />
           <Toaster richColors position="top-center" />
         </BrowserRouter>
-      </AuthProvider>
+      </Lmoxf3>
     </QueryClientProvider>
   );
 }

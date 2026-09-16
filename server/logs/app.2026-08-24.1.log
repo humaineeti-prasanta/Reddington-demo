@@ -122,3 +122,5 @@
 {"level":30,"time":"2026-08-24T10:06:04.137Z","service":"reddington-server","env":"development","module":"dsar-worker","intervalMs":30000,"msg":"started"}
 {"level":30,"time":"2026-08-24T10:06:20.274Z","service":"reddington-server","env":"development","port":"5000","msg":"reddington server listening on http://localhost:5000"}
 {"level":30,"time":"2026-08-24T10:06:20.274Z","service":"reddington-server","env":"development","module":"dsar-worker","intervalMs":30000,"msg":"started"}
+{"level":30,"time":"2026-08-24T10:06:26.720Z","service":"reddington-server","env":"development","port":"5000","msg":"reddington server listening on http://localhost:5000"}
+{"level":30,"time":"2026-08-24T10:06:26.720Z","service":"reddington-server","env":"development","module":"dsar-worker","intervalMs":30000,"msg":"started"}
