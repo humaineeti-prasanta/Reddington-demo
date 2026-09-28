@@ -4,10 +4,10 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { MapPin, Check, CreditCard, Loader2 } from 'lucide-react';
 import { api } from '@/lib/api';
-import { useAuth } from '@/context/AuthContext';
+import { useSdkConsent } from '@/hooks/useSdkConsent';
 import { useCart } from '@/hooks/commerce';
 import { rupees } from '@/lib/constants';
-import ConsentPrompt from '@/components/ConsentPrompt';
+import ConsentNeeded from '@/components/ConsentNeeded';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,7 +20,7 @@ const STEPS = ['Address', 'Location', 'Payment'];
 export default function Checkout() {
   const navigate = useNavigate();
   const qc = useQueryClient();
-  const { hasConsent } = useAuth();
+  const { granted: locationOffers } = useSdkConsent('location_offers');
   const { data: cart } = useCart();
 
   const [step, setStep] = useState(0);
@@ -161,7 +161,7 @@ export default function Checkout() {
               <CardTitle>Location-based offers</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {hasConsent('location_offers') ? (
+              {locationOffers ? (
                 <>
                   {coords ? (
                     <div className="flex items-center gap-2 rounded-md border bg-secondary p-3 text-sm">
@@ -184,18 +184,18 @@ export default function Checkout() {
                   </div>
                 </>
               ) : (
-                <ConsentPrompt
-                  purposeId="location_offers"
-                  screen="checkout"
-                  title="Use your location for nearby offers?"
-                  grantLabel="Grant & capture"
-                  dismissLabel="Continue without"
-                  rejectOnDismiss
-                  onGranted={captureGps}
-                  onDismissed={() => setStep(2)}
-                />
+                <div className="space-y-3">
+                  <ConsentNeeded
+                    title="Use your location for nearby offers?"
+                    description="Location offers are optional. Turn the purpose on in My Consents to use them."
+                    actionLabel="Manage consent"
+                  />
+                  <Button variant="ghost" onClick={() => setStep(2)}>
+                    Continue without
+                  </Button>
+                </div>
               )}
-              {step === 1 && !hasConsent('location_offers') && (
+              {step === 1 && !locationOffers && (
                 <p className="text-xs text-muted-foreground">
                   We never read your location without consent. Choose “Continue without” to skip.
                 </p>

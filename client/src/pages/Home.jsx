@@ -6,8 +6,8 @@ import { api, isConsentError } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 import { CATEGORIES } from '@/lib/constants';
 import ProductCard from '@/components/ProductCard';
-import ConsentPrompt from '@/components/ConsentPrompt';
-import AnalyticsBanner from '@/components/AnalyticsBanner';
+import ConsentNeeded from '@/components/ConsentNeeded';
+import { useSdkConsent } from '@/hooks/useSdkConsent';
 import { useWishlist, useToggleWishlist } from '@/hooks/commerce';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -66,13 +66,12 @@ export default function Home() {
       {/* For You */}
       <ForYou heartProps={heartProps} />
 
-      <AnalyticsBanner />
     </div>
   );
 }
 
 function ForYou({ heartProps }) {
-  const { refreshConsents } = useAuth();
+
 
   const recs = useQuery({
     queryKey: ['recommendations'],
@@ -103,16 +102,10 @@ function ForYou({ heartProps }) {
         <ProductGridSkeleton />
       ) : consentBlocked ? (
         <div className="space-y-4">
-          <ConsentPrompt
-            purposeId="personalized_recommendations"
-            screen="home"
+          <ConsentNeeded
             title="Enable personalization to see picks for you"
             description="We'll use your browsing history to recommend products you'll love. Withdraw anytime."
-            grantLabel="Enable personalization"
-            onGranted={async () => {
-              await refreshConsents();
-              recs.refetch();
-            }}
+            actionLabel="Enable personalization"
           />
           <div>
             <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-muted-foreground">
@@ -131,8 +124,7 @@ function ForYou({ heartProps }) {
 }
 
 function OffersStrip() {
-  const { hasConsent, refreshConsents } = useAuth();
-  const granted = hasConsent('location_offers');
+  const { granted } = useSdkConsent('location_offers');
   const [coords, setCoords] = useState(null);
 
   useEffect(() => {
@@ -157,13 +149,10 @@ function OffersStrip() {
 
   if (!granted) {
     return (
-      <ConsentPrompt
-        purposeId="location_offers"
-        screen="home"
+      <ConsentNeeded
         title="See offers near you"
         description="Share your location to unlock deals and stores in your city. Optional — withdraw anytime."
-        grantLabel="Enable location offers"
-        onGranted={() => refreshConsents()}
+        actionLabel="Enable location offers"
       />
     );
   }

@@ -1,8 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Bell, Package, Tag } from 'lucide-react';
 import { api } from '@/lib/api';
-import { useAuth } from '@/context/AuthContext';
-import ConsentPrompt from '@/components/ConsentPrompt';
+import { useSdkConsent } from '@/hooks/useSdkConsent';
+import ConsentNeeded from '@/components/ConsentNeeded';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 
 export default function Notifications() {
   const qc = useQueryClient();
-  const { hasConsent } = useAuth();
+  const { granted: promoNotifications } = useSdkConsent('promotional_notifications');
 
   const { data: notifications, isLoading } = useQuery({
     queryKey: ['notifications'],
@@ -29,14 +29,11 @@ export default function Notifications() {
     <div className="mx-auto max-w-2xl space-y-4">
       <h1 className="text-2xl font-bold">Notifications</h1>
 
-      {!hasConsent('promotional_notifications') && (
-        <ConsentPrompt
-          purposeId="promotional_notifications"
-          screen="notifications"
+      {!promoNotifications && (
+        <ConsentNeeded
           title="Turn on promotional notifications"
-          description="Get offers and deals delivered to your notification bell. You'll still receive order updates either way."
-          grantLabel="Turn on"
-          onGranted={() => qc.invalidateQueries({ queryKey: ['notifications'] })}
+          description="Get offers and deals in your notification bell. You'll still receive order updates either way."
+          actionLabel="Turn on"
         />
       )}
 

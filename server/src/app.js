@@ -8,7 +8,6 @@ import pinoHttp from 'pino-http';
 import logger from './lib/logger.js';
 import { notFound, errorHandler } from './middleware/error.js';
 import authRoutes from './modules/auth/routes.js';
-import consentRoutes from './modules/consent/routes.js';
 import userRoutes from './modules/user/routes.js';
 import productRoutes from './modules/product/routes.js';
 import cartRoutes from './modules/cart/routes.js';
@@ -23,7 +22,7 @@ const app = express();
 app.set('trust proxy', true);
 app.use(
   cors({
-    origin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
+    origin: process.env.CLIENT_ORIGIN || 'http://localhost:5174',
     credentials: true,
   })
 );
@@ -63,7 +62,6 @@ app.use(
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 
 app.use('/api/auth', authRoutes);
-app.use('/api/consents', consentRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);

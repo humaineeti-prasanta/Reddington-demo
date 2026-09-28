@@ -3,7 +3,6 @@ import jwt from 'jsonwebtoken';
 import { requireAuth } from '../../middleware/auth.js';
 import prisma from '../../config/prisma.js';
 import * as authService from './service.js';
-import * as consentService from '../consent/service.js';
 
 const router = Router();
 
@@ -34,8 +33,7 @@ router.post('/login', async (req, res, next) => {
   try {
     const user = await authService.login(req.body);
     setAuthCookie(res, user.id);
-    const reconsentRequired = await consentService.isReconsentRequired(user.id);
-    res.json({ user, reconsentRequired });
+    res.json({ user });
   } catch (e) {
     next(e);
   }
@@ -50,8 +48,7 @@ router.get('/me', requireAuth, async (req, res, next) => {
   try {
     const user = await prisma.user.findUnique({ where: { id: req.user.id } });
     if (!user) return res.status(401).json({ error: 'unauthorized' });
-    const reconsentRequired = await consentService.isReconsentRequired(user.id);
-    res.json({ user: authService.sanitize(user), reconsentRequired });
+    res.json({ user: authService.sanitize(user) });
   } catch (e) {
     next(e);
   }

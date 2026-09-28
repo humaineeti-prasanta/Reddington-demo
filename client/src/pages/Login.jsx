@@ -19,13 +19,9 @@ export default function Login() {
     e.preventDefault();
     setBusy(true);
     try {
-      const { reconsentRequired } = await login(form);
-      if (reconsentRequired) {
-        toast.info('Our privacy notice was updated. Please review your consent.');
-        navigate('/consent');
-      } else {
-        navigate('/home');
-      }
+      // The consent SDK asks again by itself when a screen has a newer version.
+      await login(form);
+      navigate('/home');
     } catch {
       toast.error('Invalid email or password.');
     } finally {

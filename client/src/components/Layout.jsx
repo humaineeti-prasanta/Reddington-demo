@@ -19,7 +19,7 @@ import {
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 export default function Layout() {
-  const { user, logout, hasConsent } = useAuth();
+  const { user, logout } = useAuth();
   const { data: cart } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
@@ -34,7 +34,8 @@ export default function Layout() {
   const unreadCount = unread?.count || 0;
 
   // Device analytics — client short-circuits when not consented; server enforces 403 regardless.
-  const analyticsOn = hasConsent('device_analytics');
+  // The server decides: /analytics/events is gated on consent held in the CMP.
+  const analyticsOn = true;
   const sessionFired = useRef(false);
   useEffect(() => {
     if (analyticsOn && !sessionFired.current) {
@@ -120,8 +121,8 @@ export default function Layout() {
                 <DropdownMenuItem onClick={() => navigate('/profile')}>Profile</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => navigate('/orders')}>My Orders</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => navigate('/wishlist')}>Wishlist</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/consent-management')}>
-                  Consent Management
+                <DropdownMenuItem onClick={() => window.DpdpConsent?.showPreferenceCenter()}>
+                  My Consents
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={onLogout} className="text-destructive">
@@ -159,9 +160,10 @@ export default function Layout() {
             <User className="size-4 text-primary" /> REDDINGTON
           </div>
           <p className="mt-1">A DPDP consent-mechanics demo. Not a real store — no real payments or emails.</p>
-          <Link to="/consent-management" className="mt-2 inline-block font-medium text-primary hover:underline">
-            Privacy & Consent
-          </Link>
+          <button type="button" onClick={() => window.DpdpConsent?.showPreferenceCenter()}
+            className="mt-2 inline-block font-medium text-primary hover:underline">
+            Privacy &amp; Consent
+          </button>
         </div>
       </footer>
     </div>

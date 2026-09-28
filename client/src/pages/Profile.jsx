@@ -74,6 +74,23 @@ export default function Profile() {
         </CardContent>
       </Card>
 
+      {/* DPDP consent SDK: opens the published preference centre ("My
+          Consents"), where the user can grant a purpose they skipped or
+          withdraw one they gave. Withdrawal must be as easy as giving. */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Privacy &amp; consent</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-muted-foreground">
+            See what you have agreed to, change it, or withdraw consent at any time.
+          </p>
+          <Button variant="outline" onClick={() => window.DpdpConsent?.showPreferenceCenter()}>
+            My Consents
+          </Button>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0">
           <CardTitle>Addresses</CardTitle>

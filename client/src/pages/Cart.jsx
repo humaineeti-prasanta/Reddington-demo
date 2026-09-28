@@ -12,6 +12,15 @@ export default function Cart() {
   const { data: cart, isLoading } = useCart();
   const { update, remove } = useCartMutations();
 
+  const goToCheckout = async () => {
+    try {
+      await window.DpdpConsent?.showScreen({ displayId: 'SCR-003' });
+    } catch (error) {
+      console.warn('Consent screen not shown:', error.message);
+    }
+    navigate('/checkout');
+  };
+
   if (isLoading) return <Skeleton className="h-64 w-full rounded-lg" />;
 
   if (!cart?.items?.length) {
@@ -89,7 +98,7 @@ export default function Cart() {
             <Row label="Delivery" value="FREE" />
             <Separator />
             <Row label="Total" value={rupees(cart.subtotal)} bold />
-            <Button className="w-full" size="lg" onClick={() => navigate('/checkout')}>
+            <Button className="w-full" size="lg" onClick={goToCheckout}>
               Proceed to Checkout
             </Button>
           </CardContent>

@@ -7,6 +7,22 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- DPDP consent SDK, served by the CMP server. Loaded before the app so
+         window.DpdpConsent exists when AuthContext needs it. -->
+    <script src="http://localhost:4000/sdk/v1/consent-sdk.min.js"></script>
+    <script>
+      // Settings only — no server call yet. The key is a browser key by
+      // design: it can only call the two SDK endpoints, for this one app.
+      //
+      // The key is the whole setup: it names the organisation and the
+      // application, and the CMP decides the screens, their type and their
+      // languages. Nothing here changes when a screen changes.
+      if (window.DpdpConsent) {
+        DpdpConsent.init({
+          apiKey: 'dpdp_live_RWKdansWIWHjaPzejklXEuqCRHmkean1ES3tktOP'
+        });
+      }
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

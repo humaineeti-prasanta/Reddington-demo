@@ -7,7 +7,6 @@ import Layout from '@/components/Layout';
 import Landing from '@/pages/Landing';
 import Register from '@/pages/Register';
 import Login from '@/pages/Login';
-import ConsentOnboarding from '@/pages/ConsentOnboarding';
 import Home from '@/pages/Home';
 import Products from '@/pages/Products';
 import ProductDetail from '@/pages/ProductDetail';
@@ -18,7 +17,6 @@ import OrderSuccess from '@/pages/OrderSuccess';
 import Orders from '@/pages/Orders';
 import Profile from '@/pages/Profile';
 import Notifications from '@/pages/Notifications';
-import ConsentManagement from '@/pages/ConsentManagement';
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: false, refetchOnWindowFocus: false } },
@@ -32,21 +30,12 @@ function FullScreenLoader() {
   );
 }
 
-// Requires auth. Bounces to /login when logged out and to /consent when re-consent is due.
+// Requires auth. Bounces to /login when logged out.
 function Protected({ children }) {
-  const { user, loading, reconsentRequired } = useAuth();
+  const { user, loading } = useAuth();
   const location = useLocation();
   if (loading) return <FullScreenLoader />;
   if (!user) return <Navigate to="/login" replace state={{ from: location }} />;
-  if (reconsentRequired) return <Navigate to="/consent" replace />;
-  return children;
-}
-
-// Requires auth only (used by the consent screen itself — must be reachable while re-consent is pending).
-function AuthedOnly({ children }) {
-  const { user, loading } = useAuth();
-  if (loading) return <FullScreenLoader />;
-  if (!user) return <Navigate to="/login" replace />;
   return children;
 }
 
@@ -56,14 +45,6 @@ function AppRoutes() {
       <Route path="/" element={<Landing />} />
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
-      <Route
-        path="/consent"
-        element={
-          <AuthedOnly>
-            <ConsentOnboarding />
-          </AuthedOnly>
-        }
-      />
       <Route
         element={
           <Protected>
@@ -81,7 +62,6 @@ function AppRoutes() {
         <Route path="/orders" element={<Orders />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/notifications" element={<Notifications />} />
-        <Route path="/consent-management" element={<ConsentManagement />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

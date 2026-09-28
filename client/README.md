@@ -4,28 +4,28 @@ React 19 + Vite 8 frontend for the reddington-v1 DPDP consent-mechanics demo. **
 
 ## Stack & Key Dependencies
 
-| Package | Version | Purpose |
-|---------|---------|---------|
-| react + react-dom | ^19.2.7 | UI framework |
-| vite | ^8.1.1 | Build tool (rolldown-based) |
-| tailwindcss + @tailwindcss/vite | ^4.3.2 | Utility CSS — v4 config-free API |
-| @tanstack/react-query | ^5.101.2 | Server state / data fetching + caching |
-| react-router-dom | ^7.18.1 | Client-side routing |
-| axios | ^1.18.1 | HTTP client (`withCredentials` for JWT cookies) |
-| sonner | ^2.0.7 | Toast notifications |
-| lucide-react | ^1.24.0 | Icon set |
-| @fontsource-variable/inter | ^5.2.8 | Inter variable font (self-hosted) |
-| radix-ui | ^1.6.2 | Headless component primitives (used by shadcn) |
-| class-variance-authority | ^0.7.1 | Variant-based component styling (shadcn) |
+| Package                         | Version  | Purpose                                         |
+| ------------------------------- | -------- | ----------------------------------------------- |
+| react + react-dom               | ^19.2.7  | UI framework                                    |
+| vite                            | ^8.1.1   | Build tool (rolldown-based)                     |
+| tailwindcss + @tailwindcss/vite | ^4.3.2   | Utility CSS — v4 config-free API                |
+| @tanstack/react-query           | ^5.101.2 | Server state / data fetching + caching          |
+| react-router-dom                | ^7.18.1  | Client-side routing                             |
+| axios                           | ^1.18.1  | HTTP client (`withCredentials` for JWT cookies) |
+| sonner                          | ^2.0.7   | Toast notifications                             |
+| lucide-react                    | ^1.24.0  | Icon set                                        |
+| @fontsource-variable/inter      | ^5.2.8   | Inter variable font (self-hosted)               |
+| radix-ui                        | ^1.6.2   | Headless component primitives (used by shadcn)  |
+| class-variance-authority        | ^0.7.1   | Variant-based component styling (shadcn)        |
 
 ## Setup
 
 ```sh
 cd client
 npm install
-npm run dev        # dev server at http://localhost:5173 — proxies /api → :5000
+npm run dev        # dev server at http://localhost:5174 — proxies /api → :5000
 npm run build      # production build → dist/
-npm run preview    # serve dist/ at :5173 — use this for E2E tests, not dev
+npm run preview    # serve dist/ at :5174 — use this for E2E tests, not dev
 npm run lint       # oxlint
 ```
 
@@ -83,25 +83,26 @@ client/src/
 
 ## Routes
 
-| Route | Page File | Guard | Description |
-|-------|-----------|-------|-------------|
-| `/` | Landing.jsx | public | Marketing landing — links to register/login |
-| `/register` | Register.jsx | public | Registration form; on success → `/consent` |
-| `/login` | Login.jsx | public | Login form |
-| `/consent` | ConsentOnboarding.jsx | AuthedOnly | 7-purpose consent form (post-register and re-consent) |
-| `/home` | Home.jsx | Protected | Hero strip, OffersStrip, ForYou recs, AnalyticsBanner |
-| `/products` | Products.jsx | Protected | Catalog with category / search / sort filters |
-| `/products/:id` | ProductDetail.jsx | Protected | Product detail page; records ViewEvent for recs |
-| `/wishlist` | Wishlist.jsx | Protected | Saved products |
-| `/cart` | Cart.jsx | Protected | Shopping cart |
-| `/checkout` | Checkout.jsx | Protected | Address + fake payment |
-| `/order-success/:id` | OrderSuccess.jsx | Protected | Post-order confirmation with delivery timeline |
-| `/orders` | Orders.jsx | Protected | Order history list |
-| `/profile` | Profile.jsx | Protected | Edit name / phone / email |
-| `/notifications` | Notifications.jsx | Protected | In-app notification list with mark-read |
-| `/consent-management` | ConsentManagement.jsx | Protected | Toggle 7 purposes + full audit history timeline |
+| Route                 | Page File             | Guard      | Description                                           |
+| --------------------- | --------------------- | ---------- | ----------------------------------------------------- |
+| `/`                   | Landing.jsx           | public     | Marketing landing — links to register/login           |
+| `/register`           | Register.jsx          | public     | Registration form; on success → `/consent`            |
+| `/login`              | Login.jsx             | public     | Login form                                            |
+| `/consent`            | ConsentOnboarding.jsx | AuthedOnly | 7-purpose consent form (post-register and re-consent) |
+| `/home`               | Home.jsx              | Protected  | Hero strip, OffersStrip, ForYou recs, AnalyticsBanner |
+| `/products`           | Products.jsx          | Protected  | Catalog with category / search / sort filters         |
+| `/products/:id`       | ProductDetail.jsx     | Protected  | Product detail page; records ViewEvent for recs       |
+| `/wishlist`           | Wishlist.jsx          | Protected  | Saved products                                        |
+| `/cart`               | Cart.jsx              | Protected  | Shopping cart                                         |
+| `/checkout`           | Checkout.jsx          | Protected  | Address + fake payment                                |
+| `/order-success/:id`  | OrderSuccess.jsx      | Protected  | Post-order confirmation with delivery timeline        |
+| `/orders`             | Orders.jsx            | Protected  | Order history list                                    |
+| `/profile`            | Profile.jsx           | Protected  | Edit name / phone / email                             |
+| `/notifications`      | Notifications.jsx     | Protected  | In-app notification list with mark-read               |
+| `/consent-management` | ConsentManagement.jsx | Protected  | Toggle 7 purposes + full audit history timeline       |
 
 **Guards:**
+
 - `Protected` — user must be logged in **and** `reconsentRequired` must be `false`; otherwise redirects to `/login` or `/consent`
 - `AuthedOnly` — user logged in only (used for `/consent` itself so re-consent flow isn't blocked)
 - `public` — no auth required
@@ -110,14 +111,14 @@ client/src/
 
 Defined in `src/index.css` as CSS custom properties and mapped to Tailwind color utilities via `@theme inline`:
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `--primary` | `#e8630a` | CTAs, active states, icons |
-| `--secondary` | `#f7f5f0` | Hero background, secondary surfaces |
-| `--foreground` | `#111111` | Primary text |
-| `--muted-foreground` | `#6b6b6b` | Secondary / helper text |
-| `--border` | `#e5e1da` | Warm grey borders |
-| `--accent` | `#fdeee2` | Light peach — pills, highlights |
+| Token                 | Value     | Usage                                |
+| --------------------- | --------- | ------------------------------------ |
+| `--primary`           | `#e8630a` | CTAs, active states, icons           |
+| `--secondary`         | `#f7f5f0` | Hero background, secondary surfaces  |
+| `--foreground`        | `#111111` | Primary text                         |
+| `--muted-foreground`  | `#6b6b6b` | Secondary / helper text              |
+| `--border`            | `#e5e1da` | Warm grey borders                    |
+| `--accent`            | `#fdeee2` | Light peach — pills, highlights      |
 | `--accent-foreground` | `#7c3206` | Dark brown — text on accent surfaces |
 
 ## Consent Gating Pattern
@@ -127,26 +128,28 @@ Every optional feature that needs consent follows this pattern:
 ```jsx
 // 1. Query — set retry:false so a 403 surfaces as an error immediately
 const recs = useQuery({
-  queryKey: ['recommendations'],
-  queryFn: () => api.get('/recommendations').then(r => r.data),
+  queryKey: ["recommendations"],
+  queryFn: () => api.get("/recommendations").then((r) => r.data),
   retry: false,
 });
 const consentBlocked = recs.isError && isConsentError(recs.error);
 
 // 2. Show ConsentPrompt when the server returns 403 consent_required
-{consentBlocked && (
-  <ConsentPrompt
-    purposeId="personalized_recommendations"
-    screen="home"
-    title="Enable personalization to see picks for you"
-    description="We'll use your browsing history to recommend products you'll love."
-    grantLabel="Enable personalization"
-    onGranted={async () => {
-      await refreshConsents();   // sync consents map in AuthContext
-      recs.refetch();            // re-hit the route — now returns 200
-    }}
-  />
-)}
+{
+  consentBlocked && (
+    <ConsentPrompt
+      purposeId="personalized_recommendations"
+      screen="home"
+      title="Enable personalization to see picks for you"
+      description="We'll use your browsing history to recommend products you'll love."
+      grantLabel="Enable personalization"
+      onGranted={async () => {
+        await refreshConsents(); // sync consents map in AuthContext
+        recs.refetch(); // re-hit the route — now returns 200
+      }}
+    />
+  );
+}
 ```
 
 `isConsentError(err)` from `src/lib/api.js` returns `true` when the server responds with `403 { error: 'consent_required' }`.
@@ -155,7 +158,7 @@ const consentBlocked = recs.isError && isConsentError(recs.error);
 
 ```js
 // src/lib/analytics.js
-track('page_view', '/products');   // silently ignored if device_analytics not granted
+track("page_view", "/products"); // silently ignored if device_analytics not granted
 ```
 
 The client always calls `track()` freely — the server enforces `requireConsent('device_analytics')` and returns 403, which `track()` catches and silently ignores. This keeps the client code clean; enforcement stays server-side.
@@ -164,11 +167,11 @@ Layout.jsx fires `session_start` once using a `useRef sessionFired` guard (preve
 
 ## Commerce Hooks (`src/hooks/commerce.js`)
 
-| Hook | Endpoint | Description |
-|------|----------|-------------|
-| `useCart()` | `GET /api/cart` | Cart query; enabled only when user is logged in |
-| `useCartMutations()` | `POST/PUT/DELETE /api/cart/items` | Returns `{ add, update, remove }` mutation objects |
-| `useWishlist()` | `GET /api/users/wishlist` | Wishlist query; enabled only when user is logged in |
+| Hook                  | Endpoint                              | Description                                                 |
+| --------------------- | ------------------------------------- | ----------------------------------------------------------- |
+| `useCart()`           | `GET /api/cart`                       | Cart query; enabled only when user is logged in             |
+| `useCartMutations()`  | `POST/PUT/DELETE /api/cart/items`     | Returns `{ add, update, remove }` mutation objects          |
+| `useWishlist()`       | `GET /api/users/wishlist`             | Wishlist query; enabled only when user is logged in         |
 | `useToggleWishlist()` | `POST/DELETE /api/users/wishlist/:id` | Single mutation that adds or removes based on current state |
 
 All mutations invalidate their respective query cache key on success.

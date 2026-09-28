@@ -1,10 +1,9 @@
 import { Router } from 'express';
 import { requireAuth } from '../../middleware/auth.js';
-import { requireConsent } from '../../middleware/requireConsent.js';
 import * as recommendationService from './service.js';
 
 const router = Router();
-router.use(requireAuth, requireConsent('personalized_recommendations'));
+router.use(requireAuth);
 
 router.get('/', async (req, res, next) => {
   try {

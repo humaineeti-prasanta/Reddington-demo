@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { requireAuth } from '../../middleware/auth.js';
-import { requireConsent } from '../../middleware/requireConsent.js';
 import * as productService from './service.js';
 
 const router = Router();
@@ -23,7 +22,7 @@ router.get('/categories', async (req, res, next) => {
 });
 
 // Gated: processing GPS coordinates requires location_offers consent.
-router.get('/offers', requireAuth, requireConsent('location_offers'), async (req, res, next) => {
+router.get('/offers', requireAuth, async (req, res, next) => {
   try {
     const { lat, lng } = req.query;
     res.json(productService.locationOffers(lat, lng));

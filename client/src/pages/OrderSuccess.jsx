@@ -2,16 +2,16 @@ import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { CheckCircle2, Package, Mail } from 'lucide-react';
 import { api } from '@/lib/api';
-import { useAuth } from '@/context/AuthContext';
+import { useSdkConsent } from '@/hooks/useSdkConsent';
 import { rupees } from '@/lib/constants';
-import ConsentPrompt from '@/components/ConsentPrompt';
+import ConsentNeeded from '@/components/ConsentNeeded';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function OrderSuccess() {
   const { id } = useParams();
-  const { hasConsent } = useAuth();
+  const { granted: marketingEmails } = useSdkConsent('marketing_emails');
 
   const { data: order, isLoading } = useQuery({
     queryKey: ['order', id],
@@ -51,18 +51,15 @@ export default function OrderSuccess() {
         </CardContent>
       </Card>
 
-      {!hasConsent('marketing_emails') && (
-        <ConsentPrompt
-          purposeId="marketing_emails"
-          screen="order_success"
+      {!marketingEmails && (
+        <ConsentNeeded
           title="Get offers on email?"
-          description="Opt in to receive marketing emails about new arrivals and sales. You can withdraw anytime."
-          grantLabel="Yes, keep me posted"
-          dismissLabel="No thanks"
+          description="Marketing emails about new arrivals and sales are optional — turn the purpose on to receive them."
+          actionLabel="Manage consent"
         />
       )}
 
-      {hasConsent('marketing_emails') && (
+      {marketingEmails && (
         <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
           <Mail className="size-4" /> You're subscribed to Reddington offers.
         </div>

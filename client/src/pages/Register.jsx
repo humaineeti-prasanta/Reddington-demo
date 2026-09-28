@@ -19,9 +19,10 @@ export default function Register() {
     e.preventDefault();
     setBusy(true);
     try {
+      // The consent SDK shows the signup consent screen right after this.
       await register(form);
-      toast.success('Welcome to Reddington! Set your consent preferences.');
-      navigate('/consent');
+      toast.success('Welcome to Reddington!');
+      navigate('/home');
     } catch (err) {
       const code = err?.response?.data?.error;
       toast.error(code === 'email_taken' ? 'That email is already registered.' : 'Registration failed.');

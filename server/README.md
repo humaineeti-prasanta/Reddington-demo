@@ -17,72 +17,72 @@ npm run dev        # node --watch src/server.js, serves on port 5000
 
 Create `server/.env` (never commit this file — it is gitignored):
 
-| Variable | Required | Default | Description |
-|----------|----------|---------|-------------|
-| `PORT` | No | `5000` | HTTP port |
-| `DATABASE_URL` | Yes | — | Neon PostgreSQL connection string (dev DB `neondb`) |
-| `TEST_DATABASE_URL` | Yes (tests) | — | Neon connection string for the separate `reddington_test` DB |
-| `JWT_SECRET` | Yes | — | Secret for signing / verifying JWTs |
-| `CLIENT_ORIGIN` | No | `http://localhost:5173` | CORS allowed origin |
+| Variable            | Required    | Default                 | Description                                                  |
+| ------------------- | ----------- | ----------------------- | ------------------------------------------------------------ |
+| `PORT`              | No          | `5000`                  | HTTP port                                                    |
+| `DATABASE_URL`      | Yes         | —                       | Neon PostgreSQL connection string (dev DB `neondb`)          |
+| `TEST_DATABASE_URL` | Yes (tests) | —                       | Neon connection string for the separate `reddington_test` DB |
+| `JWT_SECRET`        | Yes         | —                       | Secret for signing / verifying JWTs                          |
+| `CLIENT_ORIGIN`     | No          | `http://localhost:5174` | CORS allowed origin                                          |
 
 ## npm Scripts
 
-| Script | Command | Purpose |
-|--------|---------|---------|
-| `dev` | `node --watch src/server.js` | Development with auto-reload |
-| `start` | `node src/server.js` | Production start |
-| `migrate` | `prisma migrate dev` | Create + apply schema migrations |
-| `db:seed` | `prisma db seed` | Seed catalog and consent data |
-| `bump-notice` | `node src/seed/bump-notice.js` | Publish a new notice version (forces re-consent on next login) |
-| `studio` | `prisma studio` | Prisma data browser GUI at `:5555` |
-| `test` | `cross-env NODE_ENV=test ... jest --runInBand` | Run Jest + Supertest test suite |
+| Script        | Command                                        | Purpose                                                        |
+| ------------- | ---------------------------------------------- | -------------------------------------------------------------- |
+| `dev`         | `node --watch src/server.js`                   | Development with auto-reload                                   |
+| `start`       | `node src/server.js`                           | Production start                                               |
+| `migrate`     | `prisma migrate dev`                           | Create + apply schema migrations                               |
+| `db:seed`     | `prisma db seed`                               | Seed catalog and consent data                                  |
+| `bump-notice` | `node src/seed/bump-notice.js`                 | Publish a new notice version (forces re-consent on next login) |
+| `studio`      | `prisma studio`                                | Prisma data browser GUI at `:5555`                             |
+| `test`        | `cross-env NODE_ENV=test ... jest --runInBand` | Run Jest + Supertest test suite                                |
 
 ## API Routes
 
 Base URL: `/api`
 
-| Method | Path | Auth | Consent Gate | Description |
-|--------|------|:----:|:------------:|-------------|
-| GET | `/health` | | | Health check |
-| **— AUTH —** | | | | |
-| POST | `/auth/register` | | | Register user; sets httpOnly JWT cookie |
-| POST | `/auth/login` | | | Login; sets httpOnly JWT cookie; returns `reconsentRequired` |
-| POST | `/auth/logout` | | | Clears JWT cookie |
-| GET | `/auth/me` | 🔒 | | Current user + `reconsentRequired` flag |
-| **— CONSENT —** | | | | |
-| GET | `/consents/purposes` | | | Purpose catalog + active notice (public) |
-| GET | `/consents/me` | 🔒 | | User's current consent statuses |
-| POST | `/consents/decisions` | 🔒 | | Record consent decisions — **the single write path** |
-| GET | `/consents/history` | 🔒 | | Full append-only audit event history |
-| **— USER —** | | | | |
-| GET | `/users/profile` | 🔒 | | Get profile (name, email, phone) |
-| PUT | `/users/profile` | 🔒 | | Update profile |
-| GET | `/users/wishlist` | 🔒 | | Wishlist items |
-| POST | `/users/wishlist/:productId` | 🔒 | | Add to wishlist |
-| DELETE | `/users/wishlist/:productId` | 🔒 | | Remove from wishlist |
-| **— PRODUCT —** | | | | |
-| GET | `/products` | | | List products (query: `category`, `search`, `sort`, `page`, `limit`) |
-| GET | `/products/categories` | | | Category enum values |
-| GET | `/products/offers` | 🔒 | `location_offers` | Location-based discount offers (requires `lat` + `lng` query params) |
-| GET | `/products/:id` | | | Single product |
-| **— CART —** | | | | |
-| GET | `/cart` | 🔒 | | Get cart |
-| POST | `/cart/items` | 🔒 | | Add item (body: `productId`, `qty`, `size`) |
-| PUT | `/cart/items/:productId` | 🔒 | | Update qty / size |
-| DELETE | `/cart/items/:productId` | 🔒 | | Remove item |
-| **— ORDERS —** | | | | |
-| POST | `/orders` | 🔒 | | Checkout — consent-gated side effects (see Order Side Effects) |
-| GET | `/orders` | 🔒 | | Order history |
-| GET | `/orders/:id` | 🔒 | | Order detail |
-| **— NOTIFICATIONS —** | | | | |
-| GET | `/notifications` | 🔒 | | List notifications |
-| GET | `/notifications/unread-count` | 🔒 | | Unread badge count |
-| PUT | `/notifications/:id/read` | 🔒 | | Mark notification as read |
-| **— RECOMMENDATIONS —** | | | | |
-| GET | `/recommendations` | 🔒 | `personalized_recommendations` | Personalized product recs (based on ViewEvent history) |
-| POST | `/recommendations/view` | 🔒 | `personalized_recommendations` | Record a product view event |
-| **— ANALYTICS —** | | | | |
-| POST | `/analytics/events` | 🔒 | `device_analytics` | Record `session_start` or `page_view` event |
+| Method                  | Path                          | Auth |          Consent Gate          | Description                                                          |
+| ----------------------- | ----------------------------- | :--: | :----------------------------: | -------------------------------------------------------------------- |
+| GET                     | `/health`                     |      |                                | Health check                                                         |
+| **— AUTH —**            |                               |      |                                |                                                                      |
+| POST                    | `/auth/register`              |      |                                | Register user; sets httpOnly JWT cookie                              |
+| POST                    | `/auth/login`                 |      |                                | Login; sets httpOnly JWT cookie; returns `reconsentRequired`         |
+| POST                    | `/auth/logout`                |      |                                | Clears JWT cookie                                                    |
+| GET                     | `/auth/me`                    |  🔒  |                                | Current user + `reconsentRequired` flag                              |
+| **— CONSENT —**         |                               |      |                                |                                                                      |
+| GET                     | `/consents/purposes`          |      |                                | Purpose catalog + active notice (public)                             |
+| GET                     | `/consents/me`                |  🔒  |                                | User's current consent statuses                                      |
+| POST                    | `/consents/decisions`         |  🔒  |                                | Record consent decisions — **the single write path**                 |
+| GET                     | `/consents/history`           |  🔒  |                                | Full append-only audit event history                                 |
+| **— USER —**            |                               |      |                                |                                                                      |
+| GET                     | `/users/profile`              |  🔒  |                                | Get profile (name, email, phone)                                     |
+| PUT                     | `/users/profile`              |  🔒  |                                | Update profile                                                       |
+| GET                     | `/users/wishlist`             |  🔒  |                                | Wishlist items                                                       |
+| POST                    | `/users/wishlist/:productId`  |  🔒  |                                | Add to wishlist                                                      |
+| DELETE                  | `/users/wishlist/:productId`  |  🔒  |                                | Remove from wishlist                                                 |
+| **— PRODUCT —**         |                               |      |                                |                                                                      |
+| GET                     | `/products`                   |      |                                | List products (query: `category`, `search`, `sort`, `page`, `limit`) |
+| GET                     | `/products/categories`        |      |                                | Category enum values                                                 |
+| GET                     | `/products/offers`            |  🔒  |       `location_offers`        | Location-based discount offers (requires `lat` + `lng` query params) |
+| GET                     | `/products/:id`               |      |                                | Single product                                                       |
+| **— CART —**            |                               |      |                                |                                                                      |
+| GET                     | `/cart`                       |  🔒  |                                | Get cart                                                             |
+| POST                    | `/cart/items`                 |  🔒  |                                | Add item (body: `productId`, `qty`, `size`)                          |
+| PUT                     | `/cart/items/:productId`      |  🔒  |                                | Update qty / size                                                    |
+| DELETE                  | `/cart/items/:productId`      |  🔒  |                                | Remove item                                                          |
+| **— ORDERS —**          |                               |      |                                |                                                                      |
+| POST                    | `/orders`                     |  🔒  |                                | Checkout — consent-gated side effects (see Order Side Effects)       |
+| GET                     | `/orders`                     |  🔒  |                                | Order history                                                        |
+| GET                     | `/orders/:id`                 |  🔒  |                                | Order detail                                                         |
+| **— NOTIFICATIONS —**   |                               |      |                                |                                                                      |
+| GET                     | `/notifications`              |  🔒  |                                | List notifications                                                   |
+| GET                     | `/notifications/unread-count` |  🔒  |                                | Unread badge count                                                   |
+| PUT                     | `/notifications/:id/read`     |  🔒  |                                | Mark notification as read                                            |
+| **— RECOMMENDATIONS —** |                               |      |                                |                                                                      |
+| GET                     | `/recommendations`            |  🔒  | `personalized_recommendations` | Personalized product recs (based on ViewEvent history)               |
+| POST                    | `/recommendations/view`       |  🔒  | `personalized_recommendations` | Record a product view event                                          |
+| **— ANALYTICS —**       |                               |      |                                |                                                                      |
+| POST                    | `/analytics/events`           |  🔒  |       `device_analytics`       | Record `session_start` or `page_view` event                          |
 
 **🔒** = `requireAuth` middleware (reads httpOnly cookie, verifies JWT, attaches `req.user.id`).  
 **Consent Gate** = `requireConsent(purposeId)` middleware; returns `403 { error: 'consent_required', purposeId }` when the user's consent status is not `'granted'`.
@@ -146,15 +146,15 @@ The transaction timeout is raised to 20 s (from Prisma's 5 s default) to handle 
 
 **Seven canonical `purposeId` values:**
 
-| purposeId | Mandatory | What it gates |
-|-----------|:---------:|---------------|
-| `privacy_policy` | Yes | Nothing — always accepted at registration |
-| `order_processing` | Yes | Nothing — always accepted at registration |
-| `personalized_recommendations` | No | `GET /recommendations`, `POST /recommendations/view` |
-| `promotional_notifications` | No | Promo `Notification` creation at order checkout |
-| `marketing_emails` | No | Marketing `EmailLog` with `sent: true` at order checkout |
-| `device_analytics` | No | `POST /analytics/events` |
-| `location_offers` | No | `GET /products/offers`; `locationLat`/`locationLng` written to `Order` |
+| purposeId                      | Mandatory | What it gates                                                          |
+| ------------------------------ | :-------: | ---------------------------------------------------------------------- |
+| `privacy_policy`               |    Yes    | Nothing — always accepted at registration                              |
+| `order_processing`             |    Yes    | Nothing — always accepted at registration                              |
+| `personalized_recommendations` |    No     | `GET /recommendations`, `POST /recommendations/view`                   |
+| `promotional_notifications`    |    No     | Promo `Notification` creation at order checkout                        |
+| `marketing_emails`             |    No     | Marketing `EmailLog` with `sent: true` at order checkout               |
+| `device_analytics`             |    No     | `POST /analytics/events`                                               |
+| `location_offers`              |    No     | `GET /products/offers`; `locationLat`/`locationLng` written to `Order` |
 
 **Notice versioning:** `npm run bump-notice` publishes a new `Notice` row (version N+1). On next `GET /auth/me`, `reconsentRequired: true` is returned when `user.lastConsentedNoticeVersion < activeNotice.version`. The client's `Protected` route guard then redirects to `/consent`.
 
@@ -162,13 +162,13 @@ The transaction timeout is raised to 20 s (from Prisma's 5 s default) to handle 
 
 When a checkout completes (`POST /orders`), the order service reads consent from the DB (never trusts client-supplied flags) and performs:
 
-| Side effect | Condition |
-|-------------|-----------|
-| `Notification` (type: `order`) | Always |
-| `Notification` (type: `promo`) | Only if `promotional_notifications` is `granted` |
-| `EmailLog` (type: `order_confirmation`, `sent: true`) | Always |
-| `EmailLog` (type: `marketing`, `sent: true/false`) | Always written; `sent` = `marketing_emails` granted |
-| `Order.locationLat` / `locationLng` populated | Only if `location_offers` is `granted` |
+| Side effect                                           | Condition                                           |
+| ----------------------------------------------------- | --------------------------------------------------- |
+| `Notification` (type: `order`)                        | Always                                              |
+| `Notification` (type: `promo`)                        | Only if `promotional_notifications` is `granted`    |
+| `EmailLog` (type: `order_confirmation`, `sent: true`) | Always                                              |
+| `EmailLog` (type: `marketing`, `sent: true/false`)    | Always written; `sent` = `marketing_emails` granted |
+| `Order.locationLat` / `locationLng` populated         | Only if `location_offers` is `granted`              |
 
 ## Prisma Schema (`prisma/schema.prisma`)
 
@@ -176,25 +176,25 @@ Prisma is the ORM layer — it generates a type-safe Node client (`@prisma/clien
 
 ### Enums (7)
 
-| Enum | Values |
-|------|--------|
-| `ConsentAction` | `granted \| rejected \| skipped \| withdrawn` |
-| `ConsentSource` | `registration \| jit \| consent_page \| re_consent` |
-| `Category` | `men \| women \| kids \| footwear \| accessories \| beauty` |
-| `OrderStatus` | `placed \| packed \| shipped \| delivered` |
-| `NotificationType` | `order \| promo` |
-| `EmailType` | `order_confirmation \| marketing` |
-| `AnalyticsEventType` | `session_start \| page_view` |
+| Enum                 | Values                                                      |
+| -------------------- | ----------------------------------------------------------- |
+| `ConsentAction`      | `granted \| rejected \| skipped \| withdrawn`               |
+| `ConsentSource`      | `registration \| jit \| consent_page \| re_consent`         |
+| `Category`           | `men \| women \| kids \| footwear \| accessories \| beauty` |
+| `OrderStatus`        | `placed \| packed \| shipped \| delivered`                  |
+| `NotificationType`   | `order \| promo`                                            |
+| `EmailType`          | `order_confirmation \| marketing`                           |
+| `AnalyticsEventType` | `session_start \| page_view`                                |
 
 ### Models (15)
 
-| Domain | Models |
-|--------|--------|
-| Identity | `User`, `Address` |
-| Consent | `ConsentPurpose`, `Notice`, `ConsentEvent`, `ConsentState` |
-| Catalog / Commerce | `Product`, `WishlistItem`, `CartItem` |
-| Orders | `Order`, `OrderItem` |
-| Activity / Logs | `Notification`, `EmailLog`, `AnalyticsEvent`, `ViewEvent` |
+| Domain             | Models                                                     |
+| ------------------ | ---------------------------------------------------------- |
+| Identity           | `User`, `Address`                                          |
+| Consent            | `ConsentPurpose`, `Notice`, `ConsentEvent`, `ConsentState` |
+| Catalog / Commerce | `Product`, `WishlistItem`, `CartItem`                      |
+| Orders             | `Order`, `OrderItem`                                       |
+| Activity / Logs    | `Notification`, `EmailLog`, `AnalyticsEvent`, `ViewEvent`  |
 
 ### Key schema patterns
 
@@ -223,7 +223,6 @@ cd server && npm test
   - `seedBase()` — inserts 7 purposes + notice v1 + 1 test product
   - `registerAndConsent(agent, grants)` — registers a user and records the specified consent decisions
 - **Test suites:** `auth.test.js` (5 tests), `consent.test.js` (7 tests)
-
 
 ## Known Issues
 

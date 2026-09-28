@@ -8,13 +8,13 @@ AJIO-style fashion e-commerce app that doubles as a **DPDP (Digital Personal Dat
 
 ## 2. Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Database | PostgreSQL (Neon cloud, us-east-1) via Prisma 6 |
-| Server | Node 24, Express 4, ESM (`type:module`) |
-| Client | React 19 (JSX only), Vite 8, Tailwind v4, shadcn/ui new-york |
-| Auth | JWT in httpOnly cookies (7-day expiry) |
-| Testing | Jest + Supertest, separate Neon `reddington_test` database |
+| Layer    | Technology                                                   |
+| -------- | ------------------------------------------------------------ |
+| Database | PostgreSQL (Neon cloud, us-east-1) via Prisma 6              |
+| Server   | Node 24, Express 4, ESM (`type:module`)                      |
+| Client   | React 19 (JSX only), Vite 8, Tailwind v4, shadcn/ui new-york |
+| Auth     | JWT in httpOnly cookies (7-day expiry)                       |
+| Testing  | Jest + Supertest, separate Neon `reddington_test` database   |
 
 ## 3. CRITICAL Constraints
 
@@ -34,15 +34,17 @@ cd client && npm install
 cd server && npm run migrate         # prisma migrate dev — applies schema to dev DB
 cd server && npm run db:seed         # seeds 7 purposes + notice v1 + 41 products
 cd ..
-npm run dev                          # from root: starts server (:5000) + client (:5173)
+npm run dev                          # from root: starts server (:5000) + client (:5174)
 ```
 
 ## 5. Key npm Scripts
 
 **Root**
+
 - `npm run dev` — runs server + client concurrently via `concurrently`
 
 **Server** (`cd server`)
+
 - `dev` — `node --watch src/server.js` (auto-reload)
 - `start` — `node src/server.js` (production)
 - `migrate` — `prisma migrate dev`
@@ -52,21 +54,22 @@ npm run dev                          # from root: starts server (:5000) + client
 - `test` — Jest + Supertest against the `reddington_test` DB
 
 **Client** (`cd client`)
-- `dev` — Vite dev server at `:5173`
+
+- `dev` — Vite dev server at `:5174`
 - `build` — production build → `dist/`
-- `preview` — serve `dist/` at `:5173` (use this for E2E tests, not `dev`)
+- `preview` — serve `dist/` at `:5174` (use this for E2E tests, not `dev`)
 - `lint` — oxlint
 
 ## 6. Third-Party Vendor Stubs & Intentional Violations
 
 `server/src/lib/vendors.js` defines four fake vendor stubs that simulate external HTTP calls. No real requests are made — each stub logs what it would send (`[VENDOR:...]`) and returns a hardcoded success.
 
-| Stub | Simulates | Called from |
-|------|-----------|-------------|
-| `paymentGateway.charge()` | Razorpay / Stripe | `order/service.js` — after checkout transaction |
-| `logisticsPartner.schedulePickup()` | Delhivery / Shiprocket | `order/service.js` — after checkout transaction |
-| `crmService.enroll()` | Segment / Klaviyo | `auth/service.js` — immediately after `prisma.user.create()` |
-| `analyticsForwarder.track()` | Mixpanel / Amplitude | `analytics/service.js` — after every analytics DB write |
+| Stub                                | Simulates              | Called from                                                  |
+| ----------------------------------- | ---------------------- | ------------------------------------------------------------ |
+| `paymentGateway.charge()`           | Razorpay / Stripe      | `order/service.js` — after checkout transaction              |
+| `logisticsPartner.schedulePickup()` | Delhivery / Shiprocket | `order/service.js` — after checkout transaction              |
+| `crmService.enroll()`               | Segment / Klaviyo      | `auth/service.js` — immediately after `prisma.user.create()` |
+| `analyticsForwarder.track()`        | Mixpanel / Amplitude   | `analytics/service.js` — after every analytics DB write      |
 
 **These vendor calls contain intentional DPDP policy violations** planted for the compliance graph to detect. They are real data flows in the code (not comments) but invisible in the running app.
 
